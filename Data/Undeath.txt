@@ -1,0 +1,813 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Obtention of Undeath
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Hidden technical status
+//Gives the spell when obtaining Forbidden Knowledge 
+new entry "PATHOFUNDEATH_U_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "TickType" "StartTurn"
+data "TickFunctors" "IF(HasPassive('CTY_NecromancyOfThay_ForbiddenKnowledge_Passive')):ApplyStatus(PATHOFUNDEATH_U_UNLOCKER,100,-1)"
+
+//Gives the spell to undergo the Path
+new entry "PATHOFUNDEATH_U_UNLOCKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Boosts" "UnlockSpell(PathOfUndeath_Shout_Undeath)"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_U_TECHNICAL)"
+data "ApplyEffect" "4dd1bc13-5d02-45f5-bc6b-2fb8035521ac"
+//data "StatusEffect" "014a6346-be35-4185-b6e1-170ef9f418be"
+data "StackId" "PATHOFUNDEATH_U_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "10"
+
+new entry "PathOfUndeath_Shout_Undeath"
+type "SpellData"
+data "SpellType" "Shout"
+data "DisplayName" "h78ef0194ga73fg46d5gadb8gd67d8d26bfe5;1"
+data "Description" "hec1a97ecgad48g4100g8266gb94657e6c95a;1"
+data "Icon" "PoU_1_UndeathSpell"
+data "Level" "0"
+data "SpellSchool" "Necromancy"
+data "SpellProperties" "ApplyStatus(PATHOFUNDEATH_U_PREPARATIONS,100,-1);RemoveStatus(PATHOFUNDEATH_U_UNLOCKER)"
+data "TargetConditions" "Self()"
+data "PrepareSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3"
+data "PrepareLoopSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3_Loop"
+data "CastSound" "Spell_Cast_Buff_BladeWard_L1to3"
+data "TargetSound" "Spell_Impact_Buff_BladeWard_L1to3"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "UseCosts" "ActionPoint:1"
+data "VerbalIntent" "Buff"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell"
+data "HitAnimationType" "MagicalNonDamage"
+data "SpellAnimation" "2f0d97b9-4a1f-4bf3-a3c2-32efb563d601,,;,,;6a95a81d-62e7-4b68-9b45-7e42e538dbde,,;815364ff-bbaa-4efc-b10e-f31043fafd6e,,;57e449b3-b712-4508-afcf-f2e91dc473f6,,;,,;84f3727f-aabc-4e34-bf31-c6cd0160bec9,,;,,;,,"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "c582c3b6-2758-4d72-81f6-e45f07519a10"
+data "TargetEffect" "e7b6ad82-c85a-40ac-9781-cb85f2dffb89"
+
+//Obtained by casting the spell 
+//Character must succeed Missing Pets + Faltering Will ordeal to progress
+new entry "PATHOFUNDEATH_U_PREPARATIONS"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hfc988e6egf71dg4367g930agf96490a5b476;1"
+data "Description" "hb4dbafe4g9047g4c2cgb6cfgcb59e91cd1ed;1"
+data "Icon" "PoU_1_UndeathPreparations"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting;ApplyToDead"
+data "RemoveEvents" "OnStatusRemoved"
+data "RemoveConditions" "StatusId('HAG_MISSING_PETS') and HasStatus('HAG_FALTERING_WILL')"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_U_READY,100,-1)"
+data "StackId" "PATHOFUNDEATH_U_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "20"
+
+new entry "HAG_FALTERING_WILL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h9ebbfe0agd733g456fga487g00050c978a3a;1"
+data "Description" "he027b4bfgd277g4d0cg8834g68d8d4f2b8e1;1"
+data "Icon" "Item_CONS_Potion_Tribal_A_Greater"
+data "Boosts" "Disadvantage(Ability, Wisdom)"
+data "StatusGroups" ""
+
+//Made the DC 15, duration infinite until success, and non removeable by other means
+new entry "HAG_MISSING_PETS"
+type "StatusData"
+data "StatusType" "FEAR"
+data "DisplayName" "h4c4cb365g3af3g4be5g9958g8587a34e3382;1"
+data "Description" "h1c1230d9g2e67g4f23gb171g00bd6286c2c6;2"
+data "Icon" "statIcons_MissingPets"
+data "SoundVocalStart" "WEAK"
+data "SoundVocalEnd" "AWAKE"
+data "RemoveConditions" "SavingThrow(Ability.Wisdom,15)"
+data "RemoveEvents" "OnTurn"
+data "StatusGroups" ""
+data "StatusEffect" "9684b4b9-90b0-42b0-8b42-46c38d4977fe"
+data "StillAnimationType" "Feared"
+data "StillAnimationPriority" "Feared"
+data "StackId" "FEARED"
+data "Boosts" "Disadvantage(AllAbilities);Disadvantage(AttackRoll)"
+data "TooltipSave" "Wisdom"
+data "StatusPropertyFlags" "InitiateCombat;OverheadOnTurn"
+data "TickType" "EndTurn"
+
+//Character is ready, will become undead after dyings
+new entry "PATHOFUNDEATH_U_READY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hc9626c08gda3fg48e7g93bfg09e0d724f3c7;1"
+data "Description" "hec529ab5ge53dg4712gab6bg1ee98453b978;1"
+data "Icon" "PoU_1_UndeathReady"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting"
+data "OnRemoveFunctors" "IF(HasStatus('TRAVELBLOCK_CAMPNIGHTMODE')):ApplyStatus(PATHOFUNDEATH_U_RESURRECT,100,10);IF(not HasStatus('TRAVELBLOCK_CAMPNIGHTMODE')):ApplyStatus(PATHOFUNDEATH_U_RESURRECT_TECHNICAL,100,-1)"
+data "StackId" "PATHOFUNDEATH_U_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "30"
+
+new entry "PATHOFUNDEATH_U_RESURRECT_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "RemoveEvents" "OnStatusApplied"
+data "RemoveConditions" "HasStatus('TRAVELBLOCK_CAMPNIGHTMODE')"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_U_RESURRECT,100,10)"
+data "StatusPropertyFlags" "DisableCombatlog;DisablePortraitIndicator;DisableOverhead;ApplyToDead"
+
+//Resurrects automatically after 10 turns
+new entry "PATHOFUNDEATH_U_RESURRECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h56ff4206g1dc2g4b12g9918g2fb3d646f3c6;1"
+data "Description" "h1a5686acgc8bag411bg935egba86efeb39a0;1"
+data "Icon" "statIcons_GalesNecroticAura"
+data "StatusPropertyFlags" "DisableCombatlog;ApplyToDead"
+data "OnRemoveFunctors" "Resurrect(100,10);IF(not RemoveCause(StatusRemoveCause.Condition)):ApplyStatus(PATHOFUNDEATH_UNDEATH,100,-1)"
+data "RemoveEvents" "OnStatusRemoved"
+data "RemoveConditions" "StatusId('DYING')"
+data "StatusEffect" "d0c3a6f3-b954-4e8a-b9d2-8dfc66be24ab"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Undeath
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_UNDEATH"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_UNDEATH"
+data "StackType" "Ignore"
+data "StackPriority" "10"
+data "Passives" "PathOfUndeath_Undeath;PathOfUndeath_U_Defiler;PathOfUndeath_U_Defiler_Dread;PathOfUndeath_U_Defiler_Dread_2;PathOfUndeath_U_Defiler_NonDread;PathOfUndeath_ShortResting;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_VAMPIRIC_TOUCH,100,-1);ApplyStatus(PATHOFUNDEATH_U_DEFILER,100,-1);ApplyStatus(PATHOFUNDEATH_U_VFX,100,-1)"
+data "OnRemoveFunctors" "RemoveStatus(PATHOFUNDEATH_U_DEF);RemoveStatus(PATHOFUNDEATH_U_CELESTIAL);RemoveStatus(PATHOFUNDEATH_U_INURED);RemoveStatus(PATHOFUNDEATH_U_BOTH)"
+data "ApplyEffect" "33243729-1390-4bf2-8cd3-bb6b5efb3aa6"
+data "TickFunctors" "ApplyStatus(PATHOFUNDEATH_U_VFX,100,-1)"
+
+new entry "PathOfUndeath_Undeath"
+type "PassiveData"
+data "DisplayName" "h241cf47bgd1a0g45c6g8ca1g90aaadef15a1;1"
+data "Description" "h3155ba9cg6cd3g4f20gbb11g9760f722b1e0;1"
+data "Icon" "PoU_1_Undeath"
+data "Properties" "Highlighted"
+data "StatsFunctorContext" "OnCreate;OnEquip"
+data "StatsFunctors" "IF(not HasPassive('Aasimar_Fallen_Resistance') and not HasPassive('LODPassive_DeathlessFeature') and not HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_DEF,100,-1);IF(HasPassive('Aasimar_Fallen_Resistance') and not HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_CELESTIAL,100,-1);IF(not HasPassive('Aasimar_Fallen_Resistance') and not HasPassive('LODPassive_DeathlessFeature') and HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_INURED,100,-1);IF(HasPassive('Aasimar_Fallen_Resistance') and HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_BOTH,100,-1);IF(HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma')):ApplyStatus(PATHOFUNDEATH_U_DURGE,100,-1);IF(HasPassive('LODPassive_DeathlessFeature') and not HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_REBORN,100,-1);IF(HasPassive('LODPassive_DeathlessFeature') and HasPassive('InuredtoUndeath')):ApplyStatus(PATHOFUNDEATH_U_REBOTH,100,-1)"
+data "Boosts" "Advantage(DeathSavingThrow);Tag(CHARMED_ADV);StatusImmunity(SG_Disease);Tag(FRIGHTENED_ADV);UnlockInterrupt(Interrupt_Counter_ValkranaCorpseGrenade)"
+
+//Regular Undeath
+new entry "PATHOFUNDEATH_U_DEF"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U"
+data "StackPriority" "10"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Undeath_Default"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PathOfUndeath_Undeath_Default"
+type "PassiveData"
+data "DisplayName" "h1a56a5fcg613dg4545g9512g7c30a66cc0c9;1"
+data "Description" "h1b60653ag550cg4466g9801g10acfc405d76;1"
+data "Icon" "PoU_1_Undeath"
+data "Properties" "Highlighted"
+data "Boosts" "Resistance(Poison, Resistant);Resistance(Necrotic, Resistant)"
+
+new entry "PathOfUndeath_ShortResting"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnShortRest"
+data "StatsFunctors" "IF(not HasPassive('Durable') and CheckRulesetModifier('1d9a608a-3885-4d48-8816-458e40d1136e', false)):RegainHitPoints(MaxHP/2,Undead);IF(HasPassive('Durable') or CheckRulesetModifier('1d9a608a-3885-4d48-8816-458e40d1136e', true)):RegainHitPoints(MaxHP,Undead)"
+
+new entry "PATHOFUNDEATH_VAMPIRIC_TOUCH"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "SpellId('Target_VampiricTouch')"
+data "StatsFunctors" "RegainHitPoints(SELF,(DamageDone)/2,Undead)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Celestial Undeath (for Fallen Aasimar)
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_CELESTIAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U"
+data "StackPriority" "20"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Undeath_Celestial"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PathOfUndeath_Undeath_Celestial"
+type "PassiveData"
+data "DisplayName" "hdf116e1dg315bg45dfg9ecage381c4651438;1"
+data "Description" "h8b27a9bfg5742g42degb206g9c5fdcb22d56;1"
+data "Icon" "PoU_1_Celestial"
+data "Properties" "Highlighted"
+data "Boosts" "Resistance(Poison, Resistant);Resistance(Necrotic, Immune)"
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Inured to Undeath (for wearers of Deathsong armor, or high level necromancers)
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_INURED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U"
+data "StackPriority" "20"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Undeath_Inured"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+data "RemoveEvents" "OnEquip"
+data "RemoveConditions" "not HasPassive('InuredtoUndeath', context.Source)"
+
+new entry "PathOfUndeath_Undeath_Inured"
+type "PassiveData"
+data "DisplayName" "h3b717b6eg0443g42adga37bgec9119d38ef3;1"
+data "Description" "h872e3dd0gb745g4015gbfb8g8d77700ef605;1"
+data "Icon" "PoU_1_Inured"
+data "Properties" "Highlighted"
+data "Boosts" "Resistance(Poison, Resistant);Resistance(Necrotic, Immune)"
+
+//Smooths the transition out of the armor
+new entry "Siael_Armor_2"
+type "Armor"
+using "Siael_Armor_2"
+data "StatusOnEquip" "SIAEL_DEATHSONG_ARMOR_2;PATHOFUNDEATH_SMOOTH_ARMOR"
+
+new entry "Siael_Armor_3"
+type "Armor"
+using "Siael_Armor_3"
+data "StatusOnEquip" "SIAEL_DEATHSONG_ARMOR_3;PATHOFUNDEATH_SMOOTH_ARMOR"
+
+new entry "PATHOFUNDEATH_SMOOTH_ARMOR"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnRemoveFunctors" "RemoveStatus(PATHOFUNDEATH_G_INURED);RemoveStatus(PATHOFUNDEATH_G_BOTH);RemoveStatus(PATHOFUNDEATH_U_INURED);RemoveStatus(PATHOFUNDEATH_U_BOTH);RemoveStatus(PATHOFUNDEATH_U_REBOTH);RemoveStatus(PATHOFUNDEATH_G_REBOTH)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Perfected Undeath, for both of the above combined
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_BOTH"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U"
+data "StackPriority" "30"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Undeath_Both"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+data "RemoveEvents" "OnEquip"
+data "RemoveConditions" "not HasPassive('InuredtoUndeath', context.Source)"
+
+new entry "PathOfUndeath_Undeath_Both"
+type "PassiveData"
+data "DisplayName" "h69c9ce91g1fa9g49d5g81cfgd87ec5b08a9a;1"
+data "Description" "h2f4c36f0g16d9g431dgb199gc524fc18c5f9;1"
+data "Icon" "PoU_1_Perfected"
+data "Properties" "Highlighted"
+data "Boosts" "Resistance(Poison, Resistant);Resistance(Necrotic, Immune);DamageReduction(All, Flat, 1)"
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Reborn
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_REBORN"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U"
+data "StackPriority" "20"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Undeath_Reborn"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//todo: icon
+new entry "PathOfUndeath_Undeath_Reborn"
+type "PassiveData"
+data "DisplayName" "h595e4e7bgabb3g47f4ga039g31ea9988d7ff;1"
+data "Description" "he9b4861bgdd8bg4d57g9b62g6913749a0a43;1"
+data "Icon" "LOD_P_DeathlessNature"
+data "Properties" "Highlighted"
+data "Boosts" "Resistance(Poison, Immune);Resistance(Necrotic, Immune)"
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Perfected Undeath, for both of the above combined
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_REBOTH"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_U_BOTH"
+data "Passives" "PathOfUndeath_Undeath_Reboth"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_U_REBORN,100,-1)"
+
+//todo: icon
+new entry "PathOfUndeath_Undeath_Reboth"
+type "PassiveData"
+using "PathOfUndeath_Undeath_Both"
+data "Description" "h7b611e9fg209cg4266g9926g02d320548dc2;1"
+data "Icon" "LOD_P_DeathlessNature"
+data "Boosts" "Resistance(Poison, Immune);Resistance(Necrotic, Immune);DamageReduction(All, Flat, 1)"
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Dark Urge
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_U_DURGE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_DURGE"
+data "StackPriority" "10"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_U_Durge"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//Dark Undeath
+//Add 1 necrotic damage when you deal any
+//+1 per rank of Undeath
+new entry "PathOfUndeath_U_Durge"
+type "PassiveData"
+data "DisplayName" "h80df46a5g901ag41b6gb092gd2dd15bfd5e7;1"
+data "Description" "h2e559b94g76a8g4a53g860bg4819004ac6a0;1"
+data "DescriptionParams" "DealDamage(1,Necrotic)"
+data "Icon" "PoU_1_DarkUndeath"
+data "Properties" "Highlighted"
+data "Boosts" "IF(HasDamageDoneForType(DamageType.Necrotic) and not IsRedirectedDamage()):DamageBonus(1,Necrotic)"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Obtention of special buff
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Having item in inventory unlocks spell
+new entry "GOB_PainPriest_Scourge"
+type "Weapon"
+using "GOB_PainPriest_Scourge"
+data "StatusInInventory" "PATHOFUNDEATH_U_CONSUMESCOURGE"
+
+new entry "PATHOFUNDEATH_U_CONSUMESCOURGE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Boosts" "IF(HasStatus('PATHOFUNDEATH_UNDEAD',context.Source) and not HasStatus('PATHOFUNDEATH_U_BUFF',context.Source)):UnlockSpell(PathOfUndeath_Consume_Scourge)"
+
+//Script Extender consumes the item upon cast
+new entry "PathOfUndeath_Consume_Scourge"
+type "SpellData"
+data "SpellType" "Shout"
+data "DisplayName" "h741e6941g6654g4b05g93d7gffb33b27c8fc;1"
+data "Description" "heb49e316gb038g4244gbf0ag62b99634b25a;1"
+data "Icon" "PoU_1_Consume"
+data "Level" "0"
+data "SpellSchool" "Necromancy"
+data "SpellProperties" "ApplyStatus(PATHOFUNDEATH_U_BUFF,100,-1);RemoveStatus(PATHOFUNDEATH_U_CONSUMESCOURGE)"
+data "TargetConditions" "Self()"
+data "PrepareSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3"
+data "PrepareLoopSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3_Loop"
+data "CastSound" "Spell_Cast_Buff_BladeWard_L1to3"
+data "TargetSound" "Spell_Impact_Buff_BladeWard_L1to3"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "UseCosts" "ActionPoint:1"
+data "SpellAnimation" "554a18f7-952e-494a-b301-7702a85d4bc9,,;,,;09ae2f11-f5b4-42f5-ae16-687a5b57d500,,;10caea0e-c949-4d91-8ab7-3b50019dd054,,;22dfbbf4-f417-4c84-b39e-2039315961e6,,;,,;5bfbe9f9-4fc3-4f26-b112-43d404db6a89,,;,,;,,"
+data "VerbalIntent" "Buff"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell;Temporary"
+data "HitAnimationType" "MagicalNonDamage"
+data "PrepareEffect" "778b183a-7a50-4670-bb55-3be8f8ff57f5"
+data "CastEffect" "18196a59-d476-4bfd-96e6-89d55ed2acf4"
+
+new entry "PATHOFUNDEATH_U_BUFF"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U_BUFF"
+data "StackPriority" "10"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_UndeathSourge"
+
+//Adds Scourge passive to character's weapon attacks
+new entry "PathOfUndeath_UndeathSourge"
+type "PassiveData"
+data "DisplayName" "h432398b0g4b50g47e7gb656gcfdd39af7022;1"
+data "Description" "h7c13770dga5c3g4cccgbf1cg0f6e7ab063aa;1"
+data "Icon" "PoU_1_Scourge"
+data "DescriptionParams" "DealDamage(1d6,Necrotic)"
+data "TooltipConditionalDamage" "DealDamage(1d6,Necrotic)"
+data "StatsFunctorContext" "OnDamage"
+data "Properties" "OncePerAttack;IsToggled;ToggledDefaultOn;ToggledDefaultAddToHotbar"
+data "Conditions" "IsMeleeAttack()"
+data "StatsFunctors" "CreateExplosion(PathOfUndeath_ScourgeProjectile)"
+
+//Changed name and area from 2 to 3m
+new entry "PathOfUndeath_ScourgeProjectile"
+type "SpellData"
+data "SpellType" "Projectile"
+using "Projectile_GOB_PainPriest_Mace"
+data "AreaRadius" "2"
+data "ExplodeRadius" "2"
+data "DisplayName" "h432398b0g4b50g47e7gb656gcfdd39af7022;1"
+data "SpellProperties" "IF(Character() and not Dead()):DealDamage(1d6,Necrotic,Magical)"
+data "TargetEffect" "204e8d29-f363-4781-b117-ab3944ce5139"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Obtention of Dread Overlord special buff
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dread Overlord specific buff, is almost identical with Jack of all Trades (also works on Saving Throws)
+//Obtained upen contracting the Shadow Curse (via Script Extender)
+//Status serves a marker, in case character respecs
+new entry "PATHOFUNDEATH_U_SHADOW"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U_SHADOW"
+data "StackPriority" "10"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_UndeathShadow"
+data "ApplyEffect" "a345df07-737e-4217-af24-8bba7faef78b"
+
+//Technical passive to give the passive to Dread Overlord character
+new entry "PathOfUndeath_UndeathShadow"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnCreate;OnStatusApplied;OnStatusRemoved"
+data "StatsFunctors" "IF(Tagged('WARLOCK_DREAD_OVERLORD',context.Source)):ApplyStatus(PATHOFUNDEATH_U_BUFFDREAD,100,-1)"
+
+//Buff active
+new entry "PATHOFUNDEATH_U_BUFFDREAD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_U_BUFFDREAD"
+data "StackPriority" "10"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_UndeathBuffDread"
+data "StatusGroups" "SG_RemoveOnRespec"
+
+//Shadow-Blessed
+//Similar to Jack of All Trades
+//Also makes you immune to the curse
+new entry "PathOfUndeath_UndeathBuffDread"
+type "PassiveData"
+data "DisplayName" "h59a40501gbefdg40b9ga61eg9a5c3ae8d22c;1"
+data "Description" "hd3e34cfdg4ee2g426fgb155g441f08865dc2;1"
+data "Icon" "PoU_1_JackOfAllTrades"
+data "Boosts" "Tag(ACT2_SHADOW_CURSE_IMMUNE);IF(not HasProficiencyBonus(context.CheckedAbility,context.CheckedSkill,context.Source)):RollBonus(SkillCheck,ProficiencyBonus/2);IF(not HasProficiencyBonus(context.CheckedAbility,context.CheckedSkill,context.Source)):RollBonus(RawAbility,ProficiencyBonus/2);IF(not HasProficiencyBonus(context.CheckedAbility,context.CheckedSkill,context.Source)):RollBonus(SavingThrow,ProficiencyBonus/2)"
+
+//Technical status to not display message more than once
+new entry "PATHOFUNDEATH_U_SHADOW_CHECK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Makes Help work on undead (via SE)
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_HELP_HELPER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "IF(IsDowned()):RegainHitPoints(1,Guaranteed)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "CTY_NecromancyOfThay_ForbiddenKnowledge_Passive"
+type "PassiveData"
+using "CTY_NecromancyOfThay_ForbiddenKnowledge_Passive"
+data "Icon" "PoU_1_ForbiddenKnowledge2"
+
+new entry "PathOfUndeath_U_Defiler"
+type "PassiveData"
+data "DisplayName" "h6a43309cgb91cg4d35gaa66g4bfd0f3c2d33;1"
+data "Description" "h34fed1c9gf414g4b03gb81fg97bd4a1a7f79;1"
+data "ExtraDescription" "hdb0a85a0ga25ag4295ga85ag37ac22bdf117;1"
+data "ExtraDescriptionParams" "RegainHitPoints(1d4*(ProficiencyBonus-1))"
+data "Icon" "PoU_1_Defiler"
+data "StatsFunctorContext" "OnStatusApply"
+data "Conditions" "StatusId('DREADOVERLORD_HARVESTED')"
+data "StatsFunctors" "RegainHitPoints(SELF,1d4*(ProficiencyBonus-1),Undead)" 
+data "Properties" "Highlighted"
+
+new entry "PathOfUndeath_U_Defiler_Dread"
+type "PassiveData"
+data "StatsFunctorContext" "OnStatusApplied"
+data "Conditions" "StatusId('DREADOVERLORD_SOULSHIELD_FREEACTION')"
+data "StatsFunctors" "RemoveStatus(PATHOFUNDEATH_U_DEFILER_DREAD)"
+data "Properties" "IsHidden"
+
+new entry "PathOfUndeath_U_Defiler_Dread_2"
+type "PassiveData"
+data "StatsFunctorContext" "OnCreate;OnStatusRemoved"
+data "Conditions" "not HasStatus('DREADOVERLORD_SOULSHIELD_FREEACTION') or StatusId('DREADOVERLORD_SOULSHIELD_FREEACTION')"
+data "StatsFunctors" "ApplyStatus(PATHOFUNDEATH_U_DEFILER_DREAD,100,-1)"
+data "Properties" "IsHidden"
+
+new entry "PATHOFUNDEATH_U_DEFILER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "TickFunctors" "IF(Tagged('WARLOCK_DREAD_OVERLORD')):RemoveStatus(PATHOFUNDEATH_U_DEFILER_UNLOCKER);IF(not Tagged('WARLOCK_DREAD_OVERLORD')):ApplyStatus(PATHOFUNDEATH_U_DEFILER_UNLOCKER,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_U_DEFILER_UNLOCKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PathOfUndeath_U_DefileCorpse)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_U_DEFILER_DREAD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6a43309cgb91cg4d35gaa66g4bfd0f3c2d33;1"
+data "Description" "hdb0a85a0ga25ag4295ga85ag37ac22bdf117;1"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpellVariant(SpellId('Shout_DreadOverlord_HarvestSoul'),ModifyUseCosts(Replace,BonusActionPoint,1,0,ActionPoint),ModifyTooltipDescription())"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PathOfUndeath_U_DefileCorpse"
+type "SpellData"
+data "SpellType" "Target"
+data "TargetRadius" "1.5"
+data "SpellProperties" "ApplyStatus(DREADOVERLORD_HARVESTED,100,-1);"
+data "Icon" "PoU_1_DefilerSpell"
+data "DisplayName" "h2a27815eg6448g4fd6gb6e5gff92f954cd7e;1"
+data "Description" "h89077106gcf3fg406bgb0dbgf1b180f76999;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "TooltipDamageList" "RegainHitPoints(1d4*(ProficiencyBonus-1))"
+data "CycleConditions" "Dead() and not Self() and not HasStatus('DREADOVERLORD_HARVESTED')"
+data "UseCosts" "BonusActionPoint:1"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent"
+//data "TargetConditions" "IsTargetableCorpsePoU() and not HasStatus('DREADOVERLORD_HARVESTED')"
+data "TargetConditions" "Dead() and not Tagged('BEAST') and not Tagged('UNDEAD') and not Tagged('CONSTRUCT') and not Tagged('ELEMENTAL') and not Tagged('PLANT') and not Tagged('OOZE') and not Tagged('ILLITHID') and not Tagged('FIEND') and not Tagged('MINDFLAYER') and not Tagged('INTELLECT_DEVOURER') and not HasStatus('DREADOVERLORD_HARVESTED')"
+data "CastSound" "CrSpell_Cast_Raphael_SoulHarvest"
+data "TargetSound" "CrSpell_Impact_Raphael_SoulHarvest"
+data "VocalComponentSound" "Vocal_Component_Curse"
+data "SpellAnimation" "414bbf02-2918-4f01-83fb-1ddc7a588d88,,;,,;8252328a-66dd-4dc0-bbe0-00eea3204922,,;982d842b-5d44-4ef6-ab33-14d5ae514a50,,;0c5dcc83-fa78-41da-b6a5-440b5ea30936,,;,,;bea988a0-2ec5-40d8-a67e-ffbd7454bc53,,;,,;,,"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "VerbalIntent" "Buff"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "7ca21b0c-47e8-4378-b43e-bcfef5fec04c"
+data "TargetEffect" "9e0ae869-e18b-4b55-9ec1-192a4ad252a9"
+data "BeamEffect" "46764294-6fc0-4da6-869a-7c4a2f69ab36"
+data "DamageType" "Necrotic"
+
+//imported from Dread Overlord
+new entry "DREADOVERLORD_HARVESTED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h06d03102g68e7g481cg9602g67733b4d9e52;1"
+data "Description" "hf83b4a95gcddag475fga40dg74b89f127677;2"
+data "Icon" "DreadOverlord_Spell_CommitCorpse"
+data "StackId" "DREADOVERLORD_HARVESTED"
+data "StatusPropertyFlags" "ApplyToDead"
+
+new entry "DREADOVERLORD_SOULSHIELD_FREEACTION"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DREADOVERLORD_SOULSHIELD_FREEACTION"
+data "Boosts" "UnlockSpellVariant(DreadOverlord_HarvestSoul_Actions(),ModifyUseCosts(Replace,ActionPoint,0,0,ActionPoint),ModifyIconGlow(),ModifyTooltipDescription());UnlockSpellVariant(DreadOverlord_HarvestSoul_Actions(),ModifyUseCosts(Replace,BonusActionPoint,0,0,BonusActionPoint),ModifyIconGlow(),ModifyTooltipDescription())"
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Shadow mastiff
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_MASTIFF_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "6"
+data "AuraStatuses" "TARGET:IF(HasStatus('PATHOFUNDEATH_UNDEAD') and not HasStatus('PATHOFUNDEATH_V_ENTHRALLED')):ApplyStatus(PATHOFUNDEATH_MASTIFF_TAME)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting"
+
+new entry "PATHOFUNDEATH_MASTIFF_CHECKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_MASTIFF_TAME"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_MASTIFF_CHECKER,100,-1)"
+data "Boosts" "UnlockSpell(PathOfUndeath_TameDog)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PathOfUndeath_TameDog"
+type "SpellData"
+data "SpellType" "Target"
+data "DisplayName" "hd9db01a5g0254g4974ga200ga48ed59f5b9e;1"
+data "Description" "h7ee26104g26cfg4d91g85b6g5697633710a6;1"
+data "Icon" "PoU_1_Dog"
+data "TargetRadius" "9"
+data "TargetConditions" "HasStatus('PATHOFUNDEATH_MASTIFF_AURA') and not Dead()"
+data "SpellRoll" "not SavingThrow(Ability.Wisdom,CalculateSpellDC(Ability.Charisma))"
+data "SpellSuccess" "ApplyStatus(PATHOFUNDEATH_MASTIFF_TAMED,100,-1)"
+data "UseCosts" "ActionPoint:1"
+data "CastSound" "CrSpell_Cast_Raphael_SoulHarvest"
+data "TargetSound" "CrSpell_Impact_Raphael_SoulHarvest"
+data "VocalComponentSound" "Vocal_Component_Curse"
+data "SpellAnimation" "414bbf02-2918-4f01-83fb-1ddc7a588d88,,;,,;8252328a-66dd-4dc0-bbe0-00eea3204922,,;982d842b-5d44-4ef6-ab33-14d5ae514a50,,;0c5dcc83-fa78-41da-b6a5-440b5ea30936,,;,,;bea988a0-2ec5-40d8-a67e-ffbd7454bc53,,;,,;,,"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "VerbalIntent" "Buff"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "7ca21b0c-47e8-4378-b43e-bcfef5fec04c"
+data "TargetEffect" "9e0ae869-e18b-4b55-9ec1-192a4ad252a9"
+data "BeamEffect" "46764294-6fc0-4da6-869a-7c4a2f69ab36"
+
+new entry "PATHOFUNDEATH_MASTIFF_TAMED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "IF(not Dead()):FactionOverride(Source)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_MASTIFF_AURA)"
+
+new entry "PATHOFUNDEATH_DOG_SUMMON"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PathOfUndeath_SummonDog)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PathOfUndeath_SummonDog"
+type "SpellData"
+data "SpellType" "Target"
+data "DisplayName" "h2e43af7cg0c35g4451g8798g26b180d46dfc;1"
+data "Description" "hfb717e07geeb3g47dbgbbecg2214a1aa4ee3;1"
+data "Icon" "PoU_1_Dog"
+data "TargetRadius" "9"
+data "SpellProperties" "GROUND:Summon(ad034c89-9408-41b0-a399-eaf28d4d6c16,Permanent,,,'PoU_DogStack',POU_DOG_VFX,UNSUMMON_ABLE);"
+data "TargetConditions" "CanStand('ad034c89-9408-41b0-a399-eaf28d4d6c16')"
+data "CastTextEvent" "VFX_Somatic_03"
+data "UseCosts" "BonusActionPoint:1"
+data "SpellAnimation" "6f42f5f3-7a5a-4441-a02e-71b0450ac4b7,,;,,;c0513845-6e0e-42e8-9a8c-baa5e2b6ead6,,;fbf20742-9dbf-475b-9ff5-42e4b08064ad,,;42aaefdc-cf9b-4249-b159-285041851f69,,;,,;20e11c98-fff9-4417-88de-5bcc2368a1bd,,;,,;,,"
+data "VerbalIntent" "Summon"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "111a8b8c-b395-46d0-b2f0-a10ac6f9731f"
+data "TargetEffect" "695c1093-a0be-4575-89e1-995388faf747"
+data "PositionEffect" "a082692d-ad88-44e2-ab4e-f92e69150438"
+data "DisappearEffect" "111a8b8c-b395-46d0-b2f0-a10ac6f9731f"
+data "BeamEffect" "fc769c11-2f2c-4dfc-88d3-a068bfc133f9"
+data "PrepareSound" "Spell_Prepare_Summon_InsectPlague_L4to5"
+data "PrepareLoopSound" "Spell_Loop_Summon_InsectPlague_L4to5"
+data "CastSound" "Spell_Cast_Summon_AnimateDead_L1to3"
+data "TargetSound" "Spell_Impact_Summon_AnimateDead_L1to3"
+data "VocalComponentSound" "Vocal_Component_AnimateDead"
+
+new entry "POU_DOG_SUMMON_COST"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "DealDamage(MaxHP/4,Necrotic,Magical,Nonlethal,0,,true,true,,true)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PoU_ShadowDog"
+type "Character"
+using "Shadow_Mastiff_Alpha"
+data "DefaultBoosts" "BlockRegainHP(Living;Construct);Skill(Stealth, 4);Skill(Perception,3);UnlockInterrupt(Interrupt_SplinterShadows)"
+data "Passives" "BrutalBite;ShadowyRetreat;SuperiorDarkvision;AttackOfOpportunity;DarknessRules;PackTactics;ShadowVeil;FOR_SpiderQueen_SeeInvis;ShortResting"
+data "PersonalStatusImmunities" "SCL_SHADOW_CURSE;BLINDED_DARKNESS"
+
+new entry "POU_DOG_VFX"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "ApplyStatus(POU_DOG_VFX_1,100,-1);ApplyStatus(POU_DOG_VFX_2,100,-1);ApplyStatus(POU_DOG_VFX_3,100,-1);ApplyStatus(POU_DOG_VFX_4,100,-1);ApplyStatus(SELF,POU_DOG_SUMMON_COST,100,0);ApplyStatus(POU_DOG_HP,100,MaxHP/4)"
+data "StatusEffect" "d6422dfb-0caa-4354-8d63-26489afff4a0" 
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;LoseControlFriendly"
+
+new entry "POU_DOG_HP"
+type "StatusData"
+data "StatusType" "BOOST"
+data "Boosts" "IncreaseMaxHP(1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;MultiplyEffectsByDuration;FreezeDuration"
+
+new entry "POU_DOG_VFX_1"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusEffect" "db210e5b-8e16-4b3c-ac0a-b565b769dba2"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting"
+
+new entry "POU_DOG_VFX_2"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusEffect" "d0c3a6f3-b954-4e8a-b9d2-8dfc66be24ab"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting"
+
+new entry "POU_DOG_VFX_3"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusEffect" "6d293bd2-1258-4c4f-a006-bfc41628d893"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting"
+
+new entry "POU_DOG_VFX_4"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusEffect" "3fe2f74a-1f6c-442b-8882-63881c816784"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting"
+
+new entry "ZOMBIE_DECAY"
+using "ZOMBIE_DECAY"
+data "TickFunctors" "DealDamage(1,Necrotic,,,0,true,true,,true)"
+
+new entry "PoU_ShadowStep_Dog"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_ShadowStep"
+data "SpellAnimation" "5e57443f-284e-47b2-915e-5b6417db269c,,;d8b7f668-db2b-43b0-9707-5da2ed2cf27e,,;7521e279-1bb3-4105-b32d-8206234836a3,,;d172e037-7041-4352-9a20-5f4b185f9ef1,,;5bcdefbb-2194-46c2-ac77-0b2d8472a5f7,,;,,;,,;,,;,,"
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Unholy Mantle
+//-------------------------------------------------------------------------------------------------------------------------------------
+new entry "PoU_UnholyMantleUnlocker_Mod"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnCreate"
+data "StatsFunctors" "IF(Tagged('PALADIN')):ApplyStatus(POU_UNHOLY_MANTLE_UNLOCKER,100,-1)"
+data "Boosts" "IF(Tagged('PALADIN')):"
+
+new entry "PoU_UnholyMantleUnlocker"
+type "PassiveData"
+using "PoU_UnholyMantleUnlocker_Mod"
+data "StatsFunctors" "IF(Tagged('PALADIN')):ApplyStatus(POU_UNHOLY_MANTLE_UNLOCKER,100,-1)"
+
+new entry "POU_UNHOLY_MANTLE_UNLOCKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PoU_UnholyMantle)"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Path of Undeath
+new entry "POU_UNHOLY_MANTLE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "CRUSADERS_MANTLE"
+data "DisplayName" "hfcc39283e6554965a42a9c9ea82e2205e35f;1"
+data "Icon" "PoU_1_UnholyMantle"
+data "StackId" "POU_UNHOLY_MANTLE"
+data "StackType" "Ignore"
+data "DescriptionParams" "DealDamage(1d4,Necrotic)"
+data "AuraStatuses" "TARGET:IF(Character() and not Dead() and Ally()):ApplyStatus(POU_UNHOLY_AURA,100,1)"
+data "Boosts" "CharacterWeaponDamage(1d4,Necrotic)"
+
+new entry "POU_UNHOLY_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+using "CRUSADERS_MANTLE_AURA"
+data "DisplayName" "hfcc39283e6554965a42a9c9ea82e2205e35f;1"
+data "Icon" "PoU_1_UnholyMantle"
+data "StackId" "POU_UNHOLY_AURA"
+data "StatusEffect" ""
+data "DescriptionParams" "DealDamage(1d4,Necrotic)"
+data "Boosts" "CharacterWeaponDamage(1d4,Necrotic)"
+
+new entry "PoU_UnholyMantle"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_CrusadersMantle"
+data "DisplayName" "hfcc39283e6554965a42a9c9ea82e2205e35f;1"
+data "Icon" "PoU_1_UnholyMantleSpell"
+data "SpellProperties" "ApplyStatus(POU_UNHOLY_MANTLE,100,10)"
+data "DescriptionParams" "DealDamage(1d4,Necrotic)"
+data "TooltipStatusApply" "ApplyStatus(POU_UNHOLY_MANTLE,100,10)"
+
+
+
+new entry "GrimHarvest"
+type "PassiveData"
+using "GrimHarvest"
+data "StatsFunctors" "IF(IsSpell() and not IsSpellSchool(SpellSchool.Necromancy) and not IsCantrip()):RegainHitPoints(SELF,2*SpellPowerLevel);IF(IsSpell() and not IsSpellSchool(SpellSchool.Necromancy) and not IsCantrip() and HasStatus('PATHOFUNDEATH_UNDEAD',context.Source)):RegainHitPoints(SELF,2*SpellPowerLevel,Undead);IF(IsSpellSchool(SpellSchool.Necromancy) and not IsCantrip()):RegainHitPoints(SELF,3*SpellPowerLevel);IF(IsSpellSchool(SpellSchool.Necromancy) and not IsCantrip() and HasStatus('PATHOFUNDEATH_UNDEAD',context.Source)):RegainHitPoints(SELF,3*SpellPowerLevel,Undead);IF(IsSpell() and not IsCantrip()):ApplyStatus(SELF,GRIM_HARVEST_SPENT,100,1)"
+
+new entry "PATHOFUNDEATH_VAMPIRICTOUCH_AMOUNT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hb957cccdg3c73g4348g961fgcef9c8c5adcd;1"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PATHOFUNDEATH_VAMPIRICTOUCH"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+data "OnApplyFunctors" "RegainHitPoints(PATHOFUNDEATH_VAMPIRICTOUCH_AMOUNT.Duration,Undead)"
+data "OnRemoveFunctors" "RemoveStatus(PATHOFUNDEATH_VAMPIRICTOUCH_AMOUNT)"
+
+new entry "Shout_SecondWind"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_SecondWind"
+data "SpellProperties" "RegainHitPoints(1d10+ClassLevel(Fighter));IF(not HasPassive('PathOfUndeath_GreaterUndeath')):RegainHitPoints(1d10+ClassLevel(Fighter)/2,Undead);IF(HasPassive('PathOfUndeath_GreaterUndeath')):RegainHitPoints(1d10+ClassLevel(Fighter),Undead)" 
+
+

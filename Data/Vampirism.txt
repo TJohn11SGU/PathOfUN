@@ -1,0 +1,1196 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Obtention of Vampirism
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Book about vampirism
+//Can be found in Rosymorn Monastery
+//Gives undead ability to become vampire
+new entry "PoU_Book_Vampirism"
+type "Object"
+using "OBJ_Book"
+data "RootTemplate" ""
+data "ValueOverride" "500"
+data "Rarity" "Rare"
+data "Vitality" "25"
+
+//Hidden technical status
+//Obtained upon having "The Dawn's Shadow" book in inventory and being stage 1 Undeath, via Script Extender
+//Gives the spell to undergo the Path
+new entry "PATHOFUNDEATH_V_UNLOCKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Boosts" "UnlockSpell(PathOfUndeath_Shout_Vampirism)"
+data "ApplyEffect" "4dd1bc13-5d02-45f5-bc6b-2fb8035521ac"
+data "StackId" "PATHOFUNDEATH_V_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "10"
+
+new entry "PathOfUndeath_Shout_Vampirism"
+type "SpellData"
+data "SpellType" "Shout"
+data "DisplayName" "h451c913fg4c78g434aga47fg17795c7cc546;1"
+data "Description" "ha31cfca2g3838g40begb252gada18fdbd09e;1"
+data "Icon" "PoU_2_VampirismSpell"
+data "Level" "0"
+data "SpellSchool" "Necromancy"
+data "SpellProperties" "ApplyStatus(PATHOFUNDEATH_V_PREPARATIONS,100,-1);RemoveStatus(PATHOFUNDEATH_V_UNLOCKER)"
+data "TargetConditions" "Self()"
+data "PrepareSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3"
+data "PrepareLoopSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3_Loop"
+data "CastSound" "Spell_Cast_Buff_BladeWard_L1to3"
+data "TargetSound" "Spell_Impact_Buff_BladeWard_L1to3"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "UseCosts" "ActionPoint:1"
+data "VerbalIntent" "Buff"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell"
+data "HitAnimationType" "MagicalNonDamage"
+data "SpellAnimation" "2f0d97b9-4a1f-4bf3-a3c2-32efb563d601,,;,,;6a95a81d-62e7-4b68-9b45-7e42e538dbde,,;815364ff-bbaa-4efc-b10e-f31043fafd6e,,;57e449b3-b712-4508-afcf-f2e91dc473f6,,;,,;84f3727f-aabc-4e34-bf31-c6cd0160bec9,,;,,;,,"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "c582c3b6-2758-4d72-81f6-e45f07519a10"
+data "TargetEffect" "e7b6ad82-c85a-40ac-9781-cb85f2dffb89"
+
+//Character must perform Stillborn (Butterflies in the stomach) + Insanity's Kiss ritual and survive, then bite someone using Mother's Loathing
+//Obtained by reading a book in the Temple of Lathander (the Creche)
+new entry "PATHOFUNDEATH_V_PREPARATIONS"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "ha27ee902g4ba7g42cbgad19gb2e3753eee51;1"
+data "Description" "he00eb835g885eg4857g864egace9e29b45b6;1"
+data "Icon" "PoU_2_VampirismPreparations"
+data "StatusPropertyFlags" "IgnoreResting;ApplyToDead"
+data "StackId" "PATHOFUNDEATH_V_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "20"
+
+//Hits you for 10% + 6 true damage each turn for 5 turns (need 60+ HP to tank)
+//Lasts 5 turns, starting when you drink Insanity's Kiss
+//Can't be removed
+new entry "HAG_STILLBORN"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hf87b11edg0a85g4b74g9658g0f2cabb56b91;1"
+data "Description" "h20870268g1178g4531g9d49gcc5e85fefdcd;1"
+data "DescriptionParams" "DealDamage(1d6,Piercing)"
+data "Icon" "Item_CONS_Potion_Tribal_A_Supreme"
+data "TickType" "EndTurn"
+data "TooltipDamage" "DealDamage(1d6, Piercing)"
+data "TickFunctors" "IF(HasStatus('HAG_INSANITYS_KISS')):ApplyStatus(PATHOFUNDEATH_V_STILLBORN_TECHNICAL,100,0);IF(not HasStatus('HAG_INSANITYS_KISS') and HasStatus('PATHOFUNDEATH_UNDEAD')):SetStatusDuration(HAG_STILLBORN,1,Add);IF(not HasStatus('PATHOFUNDEATH_UNDEAD')):DealDamage(1d6, Piercing,Magical)"
+data "OnRemoveFunctors" "ApplyStatus(ASTARION_WEAK,100,-1);IF(HasStatus('HAG_INSANITYS_KISS') and not RemoveCause(StatusRemoveCause.Death)):ApplyStatus(PATHOFUNDEATH_V_HUNGER,100,100)"
+data "StatusGroups" ""
+
+//Responsible for the damage ticks from Butterflies in the Stomach potion
+//Supposed to kill unless you have Temporary hit points
+new entry "PATHOFUNDEATH_V_STILLBORN_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "DealDamage(1+context.Target.MaxHP/5,Necrotic,Magical,,0,,true,true,,true)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//Makes user irrestibly mad, while also preventing any healing
+//Changed to 6 turns so it outlasts the other potion
+//Can't be removed
+new entry "HAG_INSANITYS_KISS"
+type "StatusData"
+data "StatusType" "BOOST"
+//data "Boosts" "FactionOverride(64321d50-d516-b1b2-cfac-2eb773de1ff6)"
+data "DisplayName" "h9e970a5ag3666g4369g9f68gdb8fc068ae26;1"
+data "Description" "hd76f0053gcf7cg4664ga8e8g1ac530af45d4;1"
+data "Icon" "Item_CONS_Potion_Tribal_A_Supreme"
+data "StillAnimationType" "Mental"
+data "StillAnimationPriority" "Mental"
+data "SoundVocalStart" "SHOUT"
+data "SoundLoop" "Misc_Status_Madness_MO"
+data "SoundStop" "Misc_Status_Madness_MO_Stop"
+data "StackId" "MADNESS"
+data "Boosts" "AiArchetypeOverride(madness,99)"
+data "StatusPropertyFlags" "LoseControl;BringIntoCombat"
+data "StatusEffect" "127d9e0b-b235-4e98-8037-f1353b554b47"
+data "DynamicAnimationTag" "b6aa23c3-c96d-42d5-8ffa-8d441d18faa7"
+data "StatusGroups" ""
+
+
+new entry "Target_Bite_MothersLoathing"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Bite_MothersLoathing"
+data "TargetConditions" "not Self() and not Item() and not Tagged('UNDEAD') and not Tagged('PLANT') and not Tagged('ELEMENTAL') and not Tagged('CONSTRUCT') and not Tagged('OOZE') and not HasStatus('SG_Petrified',context.Target) and not Dead() and not IsInorganic() and not IsNotHumanoid()"
+
+
+//Obtained after surviving the 5 turns under both potions
+//Must bite someone to progress
+new entry "PATHOFUNDEATH_V_HUNGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h99c2276dg8ba3g4112g8c4eg1901265cb035;1"
+data "Description" "hff58bb4egb52dg4c0aga486g6c3a32db08b3;1"
+data "Icon" "PoU_2_VampirismHunger"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_V_PREPARATIONS)"
+data "RemoveEvents" "OnAttack"
+data "RemoveConditions" "(SpellId('Target_Bite_MothersLoathing') or SpellId('Target_VampireBite_Astarion') or SpellId('Target_DhampiricBite')) and not IsMiss() and not IsCriticalMiss()"
+data "OnRemoveFunctors" "IF(RemoveCause(StatusRemoveCause.Condition)):ApplyStatus(PATHOFUNDEATH_V_READY,100,-1)"
+data "StackId" "PATHOFUNDEATH_V_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "30"
+
+//Ready stage, sleep to transform
+new entry "PATHOFUNDEATH_V_READY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hbae9d7b5g0464g496cg900eg45eba99c3e40;1"
+data "Description" "hf2be54c7gfb37g40e0ga4a2ge5b4c44c9c32;1"
+data "Icon" "PoU_2_VampirismReady"
+data "StatusPropertyFlags" "ApplyToDead"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_VAMPIRISM,100,-1)"
+data "StackId" "PATHOFUNDEATH_V_TRANSFORM"
+data "StackType" "Overwrite"
+data "StackPriority" "40"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampirism
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Stage 2 reached
+new entry "PATHOFUNDEATH_VAMPIRISM"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_UNDEATH"
+data "StackType" "Ignore"
+data "StackPriority" "20"
+data "Passives" "PathOfUndeath_Undeath;PathOfUndeath_U_Defiler;PathOfUndeath_U_Defiler_Dread;PathOfUndeath_U_Defiler_Dread_2;PathOfUndeath_ShortResting;PathOfUndeath_Vampirism;PathOfUndeath_V_Specials"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+data "Boosts" "ActionResource(Movement,1.5,0)"
+data "ApplyEffect" "9af78b8a-7dcb-49d7-b6ef-592b54c16410"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_V_VFX,100,-1);ApplyStatus(PATHOFUNDEATH_VAMPIRISM_PERMANENT,100,-1)"
+data "TickFunctors" "ApplyStatus(PATHOFUNDEATH_V_VFX,100,-1);ApplyStatus(PATHOFUNDEATH_VAMPIRISM_PERMANENT,100,-1)"
+
+new entry "PATHOFUNDEATH_VAMPIRISM_PERMANENT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Gives the actual passive, depending whether the character is Astarion, Dark Urge, Dhampir...
+new entry "PathOfUndeath_Vampirism"
+type "PassiveData"
+data "DisplayName" "hf0163d49gc644g49e7g9137gbd797998e7e0;1"
+data "Properties" "IsHidden;OncePerTurn"
+data "Boosts" "UnlockSpell(PathOfUndeath_V_Enthrall);Tag(VAMPIRE)"
+data "StatsFunctorContext" "OnCreate"
+data "StatsFunctors" "IF(Tagged('REALLY_ASTARION') and not (HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma'))):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_ASTARION,100,-1);IF(not Tagged('REALLY_ASTARION') and (HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma')) and not HasPassive('Weev_Dhampir_Passives')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_DURGE,100,-1);IF(not Tagged('REALLY_ASTARION') and not (HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma')) and not HasPassive('Weev_Dhampir_Passives')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_DEFAULT,100,-1);IF(not (HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma')) and HasPassive('Weev_Dhampir_Passives')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_DHAMPIR,100,-1);IF((HasPassive('Background_HauntedOne') or HasPassive('LODHauntedOne_Enigma')) and HasPassive('Weev_Dhampir_Passives')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_HIGHER,100,-1);IF(HasPassive('Background_HauntedOne')):ApplyStatus(PATHOFUNDEATH_V_DURGE,100,-1);ApplyStatus(PATHOFUNDEATH_V_PROFIT,100,-1);IF(HasPassive('BL_OATH_TENETS')):ApplyStatus(PATHOFUNDEATH_V_BLACKGUARD,100,-1)"
+
+new entry "PathOfUndeath_V_Specials"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnStatusApplied;OnStatusRemoved"
+data "StatsFunctors" "IF(HasPassive('DreadOverlord_UnholyVigor')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_AURA_GIVER,100,-1);IF(not HasStatus('PATHOFUNDEATH_V_SHADOWFELL') and not HasStatus('PATHOFUNDEATH_V_SHADOWFELL_DREAD')):ApplyStatus(PATHOFUNDEATH_V_PRICE,100,-1);IF(not HasStatus('PATHOFUNDEATH_V_SHADOWFELL') and not HasStatus('PATHOFUNDEATH_V_SHADOWFELL_DREAD')):ApplyStatus(PATHOFUNDEATH_V_DARKVISION,100,-1);IF(HasStatus('PATHOFUNDEATH_V_SHADOWFELL') or HasStatus('PATHOFUNDEATH_V_SHADOWFELL_DREAD')):RemoveStatus(PATHOFUNDEATH_V_PRICE);IF(HasStatus('PATHOFUNDEATH_V_SHADOWFELL') or HasStatus('PATHOFUNDEATH_V_SHADOWFELL_DREAD')):RemoveStatus(PATHOFUNDEATH_V_DARKVISION)"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Default Vampirism (not Astarion nor Dark Urge)
+new entry "PATHOFUNDEATH_VAMPIRISM_DEFAULT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Default;PathOfUndeath_V_BloodpoolHeal;PathOfUndeath_V_VampireRegen;PathOfUndeath_V_LifeDrinker_Giver;PathOfUndeath_Vampirism_Profit;PathOfUndeath_V_NecroHeal;PathOfUndeath_V_RunningWater;PathOfUndeath_Nightmares;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//Regular effect, gives the ability to bite, and heal for 1 for every necrotic damage you do
+new entry "PathOfUndeath_Vampirism_Default"
+type "PassiveData"
+data "DisplayName" "hf0163d49gc644g49e7g9137gbd797998e7e0;1"
+data "Description" "hb0b21f91gb078g40b0g8da6ga1812b1ea7cd;1"
+data "DescriptionParams" "RegainHitPoints(1);Distance(1.5)"
+data "Icon" "PoU_2_Vampirism"
+data "Properties" "Highlighted;OncePerAttack"
+data "Boosts" "IF(not HasPassive('Siael_VampireAscendant') and not HasPassive('Siael_VampireAscendant_PowerHunger')):UnlockSpell(PathOfUndeath_VampireBite)"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsDamageTypeNecrotic() and Character() and not Tagged('UNDEAD',context.Target) and not Dead() and not Tagged('CONSTRUCT',context.Target) and HasHPPercentageLessThan(100,context.Source) and not HasStatus('PATHOFUNDEATH_V_NECROHEAL',context.Source)"
+data "StatsFunctors" "RegainHitPoints(SELF,1,Undead)"
+
+new entry "PathOfUndeath_V_NecroHeal"
+type "PassiveData"
+data "DisplayName" "h8d490170e463433f93cbc6dc5b28435c2e96;1"
+data "Description" "h824761ce473a4756874ba9c6ae48a5bc4729;1"
+data "DescriptionParams" "RegainHitPoints(1)"
+data "Icon" "PoU_2_Vampirism"
+data "Properties" "Highlighted;ToggledDefaultAddToHotbar;ToggledDefaultOn;IsToggled"
+data "ToggleOnFunctors" "ApplyStatus(PATHOFUNDEATH_V_NECROHEAL,100,-1)"
+data "ToggleOffFunctors" "RemoveStatus(PATHOFUNDEATH_V_NECROHEAL)"
+
+new entry "Target_VampireBite_Astarion"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_VampireBite_Astarion"
+//data "Cooldown" "OncePerCombat"
+data "DescriptionParams" "DealDamage(1d4*ProficiencyBonus, Piercing)"
+data "ExtraDescription" "h771029e9g6091g4f41g8bc5g35b8f7fac60b;2"
+data "TooltipDamageList" "RegainHitPoints(1d4*ProficiencyBonus);DealDamage(1d4*ProficiencyBonus,,,,ad727a13-c6f0-4b5b-aefd-aac79c6ed46e)"
+data "SpellProperties" "TARGET:IF(not HasStatus('SLEEPING') and not HasStatus('SNEAKING', context.Source)):DealDamage(1d4*ProficiencyBonus, Piercing);TARGET:IF(not Dead() and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH'))):ApplyStatus(SELF,PATHOFUNDEATH_V_BITEHEAL,100,0);TARGET:IF(Dead() or Tagged('REALLY_GALE')):ApplyStatus(SELF, POISONED, 100, 3); TARGET:IF(Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH') and not Dead()):ApplyStatus(SELF, BURNING, 100, 3);TARGET:IF(Tagged('HUMANOID') and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH')) and not Dead()):ApplyStatus(SELF, ASTARION_HAPPY, 100, -1);TARGET:IF(Tagged('HUMANOID') and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH')) and not Dead()):ApplyStatus(ASTARION_WEAK,100,-1);"
+data "SpellFlags" "IsMelee;Stealth;IsHarmful;CannotTargetTerrain;CannotTargetItems;DisplayDamageModifiers"
+
+//Bite with custom heal
+new entry "PathOfUndeath_VampireBite"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_VampireBite_Astarion"
+data "ExtraDescription" "ha268ec32g4d7dg497dgb380g36b456991b08;1"
+data "SpellProperties" "TARGET:IF(not HasStatus('SLEEPING') and not HasStatus('SNEAKING', context.Source)):DealDamage(1d4*ProficiencyBonus, Piercing);TARGET:IF(not Dead() and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH'))):ApplyStatus(SELF,PATHOFUNDEATH_V_BITEHEAL,100,0);TARGET:IF(Dead() or Tagged('REALLY_GALE')):ApplyStatus(SELF, POISONED, 100, 3); TARGET:IF(Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH') and not Dead()):ApplyStatus(SELF, BURNING, 100, 3);TARGET:IF(Tagged('HUMANOID') and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH')) and not Dead()):ApplyStatus(SELF, PATHOFUNDEATH_V_HAPPY, 100, -1);TARGET:IF(Tagged('HUMANOID') and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH')) and not Dead()):ApplyStatus(ASTARION_WEAK,100,-1);IF(HasPassive('PathOfUndeath_Vampirism_Durge',context.Source) or HasPassive('PathOfUndeath_Vampirism_Dhampir_Durge',context.Source)):ApplyStatus(BLEEDING,100,3)"
+data "TooltipStatusApply" "ApplyStatus(PATHOFUNDEATH_V_HAPPY, 100, -1);ApplyStatus(ASTARION_WEAK,100,-1)"
+data "SpellFlags" "IsMelee;Stealth;IsHarmful;CannotTargetTerrain;CannotTargetItems;DisplayDamageModifiers"
+
+//Custom heal fit for Undead
+new entry "PATHOFUNDEATH_V_BITEHEAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "RegainHitPoints(SELF,1d4*ProficiencyBonus,Undead);IF(HasStatus('PATHOFUNDEATH_LIVING')):RegainHitPoints(SELF,1d4*ProficiencyBonus)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Custom heal fit for Undead
+new entry "PATHOFUNDEATH_V_BITEHEAL_ASCENDANT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "RegainHitPoints(SELF,6d6,Undead);IF(HasStatus('PATHOFUNDEATH_LIVING')):RegainHitPoints(SELF,6d6)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Custom Happy for others than Astarion
+new entry "PATHOFUNDEATH_V_HAPPY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "ha67b4369g7cd5g4517gacb0gbe71b9ed4e30;1"
+data "Description" "hf0681ce8g7afcg4b64gb7e1g8801b436b986;1"
+data "Icon" "Status_Astarion_Happy"
+data "StackId" "ASTARION_HAPPY"
+data "Boosts" "RollBonus(SavingThrow,1);RollBonus(Attack,1);RollBonus(SkillCheck,1);RollBonus(RawAbility,1)"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Sensibility to Light
+new entry "PATHOFUNDEATH_V_PRICE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_V_PRICE"
+data "StackType" "Ignore"
+data "Passives" "SunlightWeakness"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Edge of the Night
+//Buffs from being obscured
+new entry "PathOfUndeath_Vampirism_Profit"
+type "PassiveData"
+data "DisplayName" "hd71fdde4g10cag4675ga6fcga06e6ea0abb7;1"
+data "Description" "hd0f3ebbegd9adg492fgbbc9gf6520d40beb0;1"
+data "Properties" "Highlighted"
+data "Icon" "PoU_2_EdgeNight"
+data "Boosts" "UnlockSpell(PathOfUndeath_V_VampFlight)"
+data "StatsFunctorContext" "OnObscurityChanged"
+data "StatsFunctors" "IF(not HasObscuredState(ObscuredState.Clear)):ApplyStatus(PATHOFUNDEATH_V_OBSCURITY, 100, -1);IF(HasObscuredState(ObscuredState.Clear)):RemoveStatus(PATHOFUNDEATH_V_OBSCURITY)"
+
+//Buff from obscurity
+//Bonus to Critical threshold and DC
+new entry "PATHOFUNDEATH_V_OBSCURITY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "DisplayName" "h22b68c00g7703g45fcgb646gfb804a0529b4;1"
+data "Description" "hf9b87e5egb328g4cdbg9b8dgfc7a5bad52c0;1"
+data "Icon" "PassiveFeature_Generic_Ethereal"
+data "Boosts" "ReduceCriticalAttackThreshold(1);SpellSaveDC(1)"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog"
+data "StatusEffect" "3ce4d62e-4969-42c2-9fa6-f715a73ae77e"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Darkvision
+//Removed and upgraded at some point, that's why it's a status
+new entry "PATHOFUNDEATH_V_DARKVISION"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_V_DARKVISION"
+data "StackType" "Ignore"
+data "StackPriority" "10"
+data "Passives" "DarkVision"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampire Flight
+new entry "PathOfUndeath_V_VampFlight"
+type "SpellData"
+data "SpellType" "Target"
+using "Projectile_Jump_Vampire_Bats"
+data "TargetRadius" "8"
+data "DisplayName" "h8c7d42d0gfec3g47a0g8668gca40f286d997;1"
+data "Description" "h35045b7bgc5cag48fag8a26g6aaebfa51f52;1"
+data "Icon" "Action_WildShape_Bat"
+data "RequirementConditions" "not HasObscuredState(ObscuredState.Clear,context.Source)"
+data "RequirementEvents" "OnObscurityChanged"
+data "TargetConditions" "CanStand('') and not HasObscuredStateAtPosition(ObscuredState.Clear)"
+data "PrepareEffect" "494541df-d94e-4dcd-876a-d3a644d80a91
+data "SpellFlags" "IsJump;HasHighGroundRangeExtension;IgnoreVisionBlock;RangeIgnoreVerticalThreshold;Stealth;Invisible;CannotTargetCharacter;CannotTargetItems;Temporary;NoAOEDamageOnLand;IgnoreAoO"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Burgundelight
+//Heal for 1d4 when stepping in blood, toggleable
+new entry "PathOfUndeath_V_BloodpoolHeal"
+type "PassiveData"
+data "DisplayName" "hac461eddgfcbag4bb6g94e6g073a20b58c6d;1"
+data "Description" "hb3029f78gdb88g4ca9gab4bg352f9dd3878d;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "Icon" "PoU_2_Burgundelight"
+data "Properties" "Highlighted;ToggledDefaultAddToHotbar;ToggledDefaultOn;IsToggled"
+data "StatsFunctorContext" "OnSurfaceEnter"
+data "Conditions" "InSurface('SurfaceBlood',context.Source)"
+data "StatsFunctors" "IF(not HasMaxHP(context.Source)):ApplyStatus(PATHOFUNCEATH_V_BLOODPOOLHEAL_VFX,100,1);IF(not HasMaxHP(context.Source)):RegainHitPoints(1d4,Undead);GROUND:IF(not HasMaxHP(context.Source)):CreateSurface(1,-1,None)"
+data "ToggleOnFunctors" "ApplyStatus(PATHOFUNCEATH_V_BLOODPOOLHEAL,100,-1)"
+data "ToggleOffFunctors" "RemoveStatus(PATHOFUNCEATH_V_BLOODPOOLHEAL)"
+
+//Technical checker for above
+new entry "PATHOFUNCEATH_V_BLOODPOOLHEAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNCEATH_V_BLOODPOOLHEAL"
+data "StackType" "Ignore"
+data "StackPriority" "10"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNCEATH_V_BLOODPOOLHEAL_VFX"
+type "StatusData"
+data "StatusType" "EFFECT"
+data "StatusEffect" "56e94294-31b6-43f3-8465-10a752b22c61"
+data "StatusPropertyFlags" "DisableOverhead;DisableCombatlog;DisablePortraitIndicator"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampire Regeneration
+//Heal 1 every turn, toggleable
+new entry "PathOfUndeath_V_VampireRegen"
+type "PassiveData"
+data "DisplayName" "he729d738g1307g469eg8150gfd174488b57c;2"
+data "Description" "hf81bbd37g57fdg4790g8379g65b2e2ce1d8e;4"
+data "DescriptionParams" "RegainHitPoints(1)"
+data "Icon" "Action_Mag_Bloodfeeding_ScarletRegeneration"
+data "EnabledConditions" "(not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL',context.Target)) and not HasStatus('DAMAGE_DEALT_RADIANT',context.Target)"
+data "EnabledContext" "OnObscurityChanged"
+data "Properties" "IsToggled;ToggledDefaultOn;ToggledDefaultAddToHotbar;Highlighted"
+data "ToggleOnFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_V_VAMPIREREGEN,100,-1)"
+data "ToggleOffFunctors" "RemoveStatus(SELF,PATHOFUNDEATH_V_VAMPIREREGEN)"
+
+//Toggled effect from above
+new entry "PATHOFUNDEATH_V_VAMPIREREGEN"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h0d3553afg86adg4398ga515gc334258228b0;1"
+data "Description" "h69ae6801g4b36g4929g9283g0e23f90041a9;1"
+data "DescriptionParams" "RegainHitPoints(1)"
+data "Icon" "Action_Mag_Bloodfeeding_ScarletRegeneration"
+data "StackId" "PATHOFUNDEATH_V_VAMPIREREGEN"
+data "StackPriority" "0"
+data "StackType" "Ignore"
+data "Toggle" "Yes"
+data "TickType" "StartTurn"
+data "RemoveConditions" "IsInSunlight(context.Target)"
+data "RemoveEvents" "OnObscurityChanged"
+data "TickFunctors" "IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100)):ApplyStatus(PATHOFUNDEATH_V_VAMPIREREGEN_TICK,100,0);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and PoU_AscendantCheck()):RegainHitPoints(1,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_1')):RegainHitPoints(2,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_2')):RegainHitPoints(3,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_3')):RegainHitPoints(4,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_4')):RegainHitPoints(5,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_5')):RegainHitPoints(6,Undead);IF((not IsInSunlight(context.Target) or HasStatus('PATHOFUNDEATH_V_SHADOWFELL')) and not HasStatus('DAMAGE_DEALT_RADIANT') and HasHPPercentageLessThan(100) and HasStatus('SIAEL_VAMPIRE_ASCENDANT_6')):RegainHitPoints(7,Undead)"
+data "StatusPropertyFlags" "TickingWithSource;DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PATHOFUNDEATH_V_VAMPIREREGEN_TICK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "ApplyEffect" "51eef969-9229-4dd3-860d-c2614cca217c"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Enhanced Lifedrinker
+//Buffs Warlock Invocation and Deathsong
+new entry "PathOfUndeath_V_LifeDrinker_Giver"
+type "PassiveData"
+data "StatsFunctorContext" "OnCreate;OnEquip"
+data "StatsFunctors" "IF(HasPassive('Siael_Lifedrinker',context.Source)):ApplyStatus(PATHOFUNDEATH_V_LIFEDRINKER_DEATHSONG,100,-1);IF(HasPassive('Lifedrinker',context.Source)):ApplyStatus(PATHOFUNDEATH_V_LIFEDRINKER,100,-1)"
+data "Properties" "IsHidden"
+
+//Enhanced Lifedrinker for Warlock Invocation
+new entry "PATHOFUNDEATH_V_LIFEDRINKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_V_LIFEDRINKER"
+data "StackPriority" "10" 
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisablePortraitIndicator;DisableOverhead;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_V_Lifedrinker"
+data "StatusGroups" "SG_RemoveOnRespec"
+
+//Passive for display for above
+new entry "PathOfUndeath_V_Lifedrinker"
+type "PassiveData"
+data "DisplayName" "h626f3f2dgd77eg48cfgb7e7gecb4ff1eb6f0;1"
+data "Description" "h26c2d3d0g1e74g4011g8b4ag9aca5a06bb9f;1"
+data "Icon" "PoU_2_EnhancedLifedrinker"
+data "Properties" "Highlighted"
+
+//Edited vanilla Lifedrinker to work with above
+//Now deals double Charisma as damage when target is below 50% HP
+
+new entry "Lifedrinker"
+type "PassiveData"
+data "DisplayName" "h3ebd6cc3gd274g440bg9f77g71a4da3b6bd2;2"
+data "Description" "hd81f7383ga4beg4c2dgbea1g00e02e76e136;4"
+data "DescriptionParams" "DealDamage(CharismaModifier,Necrotic)"
+data "Icon" "PassiveFeature_Lifedrinker"
+data "Properties" "Highlighted"
+data "StatsFunctorContext" ""
+data "Conditions" ""
+data "StatsFunctors" ""
+data "Boosts" "IF(IsWeaponAttack() and not HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) or not HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(CharismaModifier,Necrotic);IF(IsWeaponAttack() and HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) and HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(CharismaModifier*2,Necrotic)"
+
+new entry "OREO_LifedrinkerNecrotic_Passive"
+type "PassiveData"
+using "OREO_LifedrinkerNecrotic_Passive"
+data "Boosts" "IF(IsMeleeWeaponAttack() and not HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) or not HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(1d6,Necrotic);IF(IsMeleeWeaponAttack() and HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) and HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(2d6,Necrotic)"
+
+
+new entry "OREO_LifedrinkerPsychic_Passive"
+type "PassiveData"
+using "OREO_LifedrinkerPsychic_Passive"
+data "Boosts" "IF(IsMeleeWeaponAttack() and not HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) or not HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(1d6,Psychic);IF(IsMeleeWeaponAttack() and HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) and HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(2d6,Psychic)"
+
+
+new entry "OREO_LifedrinkerRadiant_Passive"
+type "PassiveData"
+using "OREO_LifedrinkerRadiant_Passive"
+data "Boosts" "IF(IsMeleeWeaponAttack() and not HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) or not HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(1d6,Radiant);IF(IsMeleeWeaponAttack() and HasPassive('PathOfUndeath_V_Lifedrinker',context.Source) and HasHPPercentageEqualOrLessThan(50)):CharacterWeaponDamage(2d6,Radiant)"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Running Water Weakness
+//Get hurt by running waters
+new entry "PathOfUndeath_V_RunningWater"
+type "PassiveData"
+data "DisplayName" "hf01652d2g1d94g48ccgaad9g0d5909e69118;1"
+data "Description" "h5ef87726g4fd4g449cg9b50g69e49d7a2c69;1"
+data "Icon" "PoU_2_WaterWeakness"
+data "Properties" "Highlighted"
+data "StatsFunctorContext" "OnSurfaceEnter"
+data "StatsFunctors" "IF(InSurface('SurfaceDeepWater')):ApplyStatus(PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE,100,1)"
+
+new entry "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h50533279g5eb2g4187g8ec3g72488644c43d;1"
+data "Description" "h41f53f62g53b2g4503gaacag8608cab77a50;2"
+data "DescriptionParams" "DealDamage(1,Acid)"
+data "Icon" "statIcons_RunningWater"
+data "StackId" "RUNNING_WATER_VAMPIRE"
+data "StackPriority" "1"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog"
+data "OnApplyFunctors" "DealDamage(1,Acid)"
+data "OnRemoveFunctors" "IF(InSurface('SurfaceDeepWater')):ApplyStatus(PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_2,100,1)"
+data "ManagedStatusEffectType" "Negative"
+data "ManagedStatusEffectGroup" "d787f666-8ee6-4185-9365-6aac9ebe76ae"
+
+new entry "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE"
+data "DescriptionParams" "DealDamage(2,Acid)"
+data "StackPriority" "2"
+data "OnApplyFunctors" "DealDamage(2,Acid)"
+data "OnRemoveFunctors" "IF(InSurface('SurfaceDeepWater')):ApplyStatus(PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_3,100,1)"
+
+new entry "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE"
+data "DescriptionParams" "DealDamage(4,Acid)"
+data "StackPriority" "3"
+data "OnApplyFunctors" "DealDamage(4,Acid)"
+data "OnRemoveFunctors" "IF(InSurface('SurfaceDeepWater')):ApplyStatus(PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_4,100,-1)"
+
+new entry "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE"
+data "DescriptionParams" "DealDamage(8,Acid)"
+data "StackPriority" "4"
+data "TickType" "StartTurn"
+data "TickFunctors" "DealDamage(8,Acid);IF(not InSurface('SurfaceDeepWater')):RemoveStatus(PATHOFUNDEATH_V_RUNNING_RUNNING_WATER_VAMPIRE_4)"
+data "OnApplyFunctors" "DealDamage(8,Acid)"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Astarion
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Astarion's version of Vampirism
+new entry "PATHOFUNDEATH_VAMPIRISM_ASTARION"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Astarion;PathOfUndeath_V_BloodpoolHeal;PathOfUndeath_V_VampireRegen;PathOfUndeath_V_LifeDrinker_Giver;PathOfUndeath_Vampirism_Profit;PathOfUndeath_V_NecroHeal;PathOfUndeath_V_RunningWater;PathOfUndeath_Nightmares;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//Astarion gets to deal a scaling 1d4 necrotic damage with his bites on top of the effect other characters get
+new entry "PathOfUndeath_Vampirism_Astarion"
+type "PassiveData"
+data "DisplayName" "h164fcaf5g7c19g4599g95c6g5db0c090a16d;1"
+data "Description" "h9b934136g0be3g48ceg84eeg164ef3738ae0;1"
+data "DescriptionParams" "DealDamage(LevelMapValue(D4Cantrip),Necrotic);RegainHitPoints(1);Distance(1.5)"
+data "Icon" "PoU_2_Vampirism"
+data "Properties" "Highlighted;DisplayBoostInTooltip"
+data "Boosts" "IF(SpellId('Target_VampireBite_Astarion') or SpellId('Target_LOW_Astarion_VampireAscendant')):DamageBonus(LevelMapValue(D4Cantrip), Necrotic);UnlockSpellVariant(SpellId('Target_VampireBite_Astarion') | SpellId('Target_LOW_Astarion_VampireAscendant'),ModifyTooltipDescription())"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "IsDamageTypeNecrotic() and Character() and not Tagged('UNDEAD',context.Target) and not Dead() and not Tagged('CONSTRUCT',context.Target)"
+data "StatsFunctors" "RegainHitPoints(SELF,1,Undead)"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dark Urge
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dark Urge's version of Vampirism
+new entry "PATHOFUNDEATH_VAMPIRISM_DURGE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Durge;PathOfUndeath_V_BloodpoolHeal;PathOfUndeath_V_VampireRegen;PathOfUndeath_V_Durge_Bleedpool;PathOfUndeath_V_LifeDrinker_Giver;PathOfUndeath_Vampirism_Profit;PathOfUndeath_V_NecroHeal;PathOfUndeath_V_RunningWater;PathOfUndeath_Nightmares;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+//Dark Urge flavored version
+new entry "PathOfUndeath_Vampirism_Durge"
+type "PassiveData"
+using "PathOfUndeath_Vampirism_Default"
+data "DisplayName" "hf31e1306g2a4ag4585gb32dgee8b45a61c42;1"
+data "Description" "hb0b21f91gb078g40b0g8da6ga1812b1ea7cd;1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Improvement of power from Undeath
+//+2 to all necrotic damage
+new entry "PATHOFUNDEATH_V_DURGE"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_U_DURGE"
+data "StackPriority" "20"
+data "Passives" "PathOfUndeath_V_Durge"
+
+new entry "PathOfUndeath_V_Durge"
+type "PassiveData"
+using "PathOfUndeath_U_Durge"
+data "Description" "hb5b6d728g229cg4ca3g9f72g9b61457b70e5;1"
+data "DescriptionParams" "DealDamage(2,Necrotic)"
+data "Boosts" "IF(HasDamageDoneForType(DamageType.Necrotic) and not IsRedirectedDamage()):DamageBonus(2,Necrotic)"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Scarlet Revelry
+//Targets who bleed because of you drop blood
+new entry "PathOfUndeath_V_Durge_Bleedpool"
+type "PassiveData"
+data "DisplayName" "h6ba083fdg1d68g45c2gad66g42a820b3dd48;1"
+data "Description" "hb3120bd7gf236g425ega2f6g6be9d1d96197;1"
+data "Properties" "Highlighted"
+data "Icon" "PoU_2_ScarletRevelry"
+data "StatsFunctorContext" "OnStatusApply" 
+data "Conditions" "StatusId('BLEEDING')"
+data "StatsFunctors" "ApplyStatus(PATHOFUNDEATH_V_DURGE_BLEEDPOOL,100,-1)"
+
+new entry "PATHOFUNDEATH_V_DURGE_BLEEDPOOL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+data "RemoveEvents" "OnStatusRemoved"
+data "RemoveConditions" "StatusId('BLEEDING')"
+data "TickType" "StartTurn"
+data "TickFunctors" "CreateSurface(0.25,-1,Blood)"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dhampir (Transient Guests Are We)
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dhampir version of Vampirism
+new entry "PATHOFUNDEATH_VAMPIRISM_DHAMPIR"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Dhampir;PathOfUndeath_Vampirism_Dhampir_Bite;PathOfUndeath_V_BloodpoolHeal;PathOfUndeath_V_VampireRegen;PathOfUndeath_V_LifeDrinker_Giver;PathOfUndeath_Vampirism_Profit;PathOfUndeath_V_NecroHeal;PathOfUndeath_V_RunningWater;PathOfUndeath_Nightmares;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PathOfUndeath_Vampirism_Dhampir"
+type "PassiveData"
+using "PathOfUndeath_Vampirism_Astarion"
+data "Boosts" "IF(SpellId('Target_DhampiricBite')):DamageBonus(LevelMapValue(D4Cantrip), Necrotic);UnlockSpellVariant(SpellId('Target_DhampiricBite'),ModifyTooltipDescription())"
+
+new entry "PathOfUndeath_Vampirism_Dhampir_Bite"
+type "PassiveData"
+data "StatsFunctorContext" "OnAttack"
+data "Conditions" "not IsMiss() and not IsCriticalMiss() and SpellId('Target_DhampiricBite')"
+data "StatsFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_V_HAPPY,100,-1)"
+data "Properties" "IsHidden"
+
+new entry "Target_DhampiricBite"
+type "SpellData"
+data "SpellType" "Target"
+data "Cooldown" "OncePerShortRest"
+data "SpellProperties" "DealDamage(LevelMapValue(Weev_D4ProfBonus), Piercing);TARGET:IF(not Dead() and not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH'))):ApplyStatus(SELF,PATHOFUNDEATH_V_BITEHEAL,100,0);TARGET:IF(Dead() or Tagged('REALLY_GALE')):ApplyStatus(SELF, POISONED, 100, 3); TARGET:IF(Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH') and not Dead()):ApplyStatus(SELF, BURNING, 100, 3);TARGET:IF(not Tagged('REALLY_GALE') and not (Tagged('REALLY_KARLACH') and not Tagged('KARLACH_CAN_TOUCH')) and not Dead()):RemoveStatus(SELF, WEEV_THIRSTYSTATUS)"
+data "TargetRadius" "1.5"
+data "DeathType" "DoT"
+data "TargetConditions" "not Self() and not Item() and not Tagged('UNDEAD') and not Tagged('PLANT') and not Tagged('ELEMENTAL') and not Tagged('CONSTRUCT') and not Tagged('OOZE') and not HasStatus('SG_Petrified',context.Target)"
+data "Icon" "Action_VampireBite"
+data "DisplayName" "h1073b673g038bg484dgb92bg9bd4fd5e5280;1"
+data "Description" "h4b5269b9g29f9g43b1gb6feg924559fd0080;5"
+data "DescriptionParams" "DealDamage(LevelMapValue(Weev_D4ProfBonus),Piercing);RegainHitPoints(LevelMapValue(Weev_D4ProfBonus))"
+data "TooltipDamageList" "RegainHitPoints(LevelMapValue(Weev_D4ProfBonus));DealDamage(LevelMapValue(Weev_D4ProfBonus),Piercing,,,,ad727a13-c6f0-4b5b-aefd-aac79c6ed46e)"
+data "TooltipStatusApply" "RemoveStatus(WEEV_THIRSTYSTATUS);ApplyStatus(BLEEDING,100,2)"
+data "CastSound" "Action_Cast_VampireBite"
+data "TargetSound" "Action_Impact_VampireBite"
+data "CastTextEvent" "Cast"
+data "UseCosts" "BonusActionPoint:1"
+data "SpellAnimation" "f13da615-33ae-412e-8314-4ac4fc560dbf,,;0b0775f0-96b0-4f8e-994d-5bfbae3ec0f0,,;01fe9641-f630-4ed2-8035-1186dc7a5803,,;e6643712-8521-4c83-b518-1a10d61da4ef,,;f28943e2-f5e6-4133-80ef-8c7c4f628920,,;1c693368-c595-46bd-b8c5-e406f9486ef8,,;a6ff21b9-291e-44c8-bf87-8de3703c5e97,,;,,;,,"
+data "SpellFlags" "IsMelee;Stealth;IsHarmful;CannotTargetTerrain;CannotTargetItems;DisplayDamageModifiers"
+data "SpellAnimationIntentType" "Aggressive"
+data "PrepareEffect" "7fb582d5-8a10-4e14-99c6-cf3856ed81a4"
+data "CastEffect" "beb643ec-4b17-4618-951a-e98230f757b6"
+data "TargetEffect" "e415a119-48eb-407e-9e3a-d48266a3b902"
+data "DamageType" "Piercing"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dhampir Dark Urge (Transient Guests Are We)
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dhampir Dark Urge version of Vampirism
+new entry "PATHOFUNDEATH_VAMPIRISM_HIGHER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Dhampir;PathOfUndeath_Vampirism_Dhampir_Bite;PathOfUndeath_Vampirism_Dhampir_Durge;PathOfUndeath_V_BloodpoolHeal;PathOfUndeath_V_VampireRegen;PathOfUndeath_V_LifeDrinker_Giver;PathOfUndeath_Vampirism_Profit;PathOfUndeath_V_Durge_Bleedpool;PathOfUndeath_V_NecroHeal;PathOfUndeath_V_RunningWater;PathOfUndeath_Nightmares;PoU_Blackguard_Necrotic"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PathOfUndeath_Vampirism_Dhampir_Durge"
+type "PassiveData"
+using "PathOfUndeath_Vampirism_Durge"
+data "Boosts" ""
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Sanguine Smite(Blackguard)
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Sanguine/Lacerating smite heals for 1d6
+new entry "PATHOFUNDEATH_V_BLACKGUARD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_V_Blackguard"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PathOfUndeath_V_Blackguard"
+type "PassiveData"
+data "DisplayName" "h2f111712g5691g4abcgbcd2gcc838acc81cf;1"
+data "Description" "hb0933a3cga2ecg4ffbgbde8g0629f9566c1e;1"
+data "DescriptionParams" "RegainHitPoints(1d6)"
+data "Icon" "ICO_LACERATING_SMITE"
+data "StatsFunctorContext" "OnAttack"
+data "Conditions" "not IsMiss() and not IsCriticalMiss()"
+data "StatsFunctors" "IF(SpellId('BL_TARGET_SMITE_LACERATING')):RegainHitPoints(SELF,1d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_3')):RegainHitPoints(SELF,2d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_4')):RegainHitPoints(SELF,3d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_5')):RegainHitPoints(SELF,4d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_6')):RegainHitPoints(SELF,5d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_7')):RegainHitPoints(SELF,6d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_8')):RegainHitPoints(SELF,7d6,Undead);IF(SpellId('BL_TARGET_SMITE_LACERATING_9')):RegainHitPoints(SELF,8d6,Undead);"
+data "StatusGroups" "SG_RemoveOnRespec"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dread Overlord
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "DREADOVERLORD_NECROTICBLADE_UNARMED"
+type "StatusData"
+data "StatusType" "BOOST"
+using "DREADOVERLORD_NECROTICBLADE_UNARMED"
+data "Boosts" "UnarmedMagicalProperty();IF(IsMeleeUnarmedAttack()):CharacterUnarmedDamage(LevelMapValue(D4Cantrip), Necrotic);IF(PoU_BiteAttack()):DamageBonus(LevelMapValue(D4Cantrip), Necrotic);UnlockSpellVariant(MeleeUnarmedAttackCheck(),ModifyIconGlow(),ModifyTooltipDescription());UnlockSpellVariant(PoU_BiteAttack(),ModifyIconGlow(),ModifyTooltipDescription());EntityThrowDamage(LevelMapValue(D4Cantrip), Necrotic);IF(IsRangedUnarmedAttack()):CharacterWeaponDamage(LevelMapValue(D4Cantrip), Necrotic)"
+
+//When character uses Necrotic Armaments, they cast an aura that buffs allied undead in the vicinity
+//Checker status
+new entry "PATHOFUNDEATH_VAMPIRISM_AURA_GIVER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM_AURA_GIVER"
+data "StackType" "Ignore"
+data "Passives" "PathOfUndeath_Vampirism_Aura"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+data "StatusGroups" "SG_RemoveOnRespec"
+
+new entry "PathOfUndeath_Vampirism_Aura"
+type "PassiveData"
+data "DisplayName" "h6a683626g7c5ag46f6gbe69gb8c779adacb8;1"
+data "Description" "h6852d84ag6e91g41a1ga9d3g361cd9b4925f;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "Icon" "PoU_2_DreadVampirism"
+data "Properties" "Highlighted"
+data "StatsFunctorContext" "OnStatusApplied"
+data "Conditions" "StatusId('DREADOVERLORD_UNHOLYVIGOR_IMMUNITY')"
+data "StatsFunctors" "IF(not HasPassive('PathOfUndeath_NecroArmaments_FreeCast')):ApplyStatus(SELF,PATHOFUNDEATH_VAMPIRISM_AURA,100,10);IF(HasPassive('PathOfUndeath_NecroArmaments_FreeCast')):ApplyStatus(SELF,PATHOFUNDEATH_VAMPIRISM_AURA,100,-1)"
+
+//Aura makes undead allies heal for 1d4 on every attack on the living
+new entry "PATHOFUNDEATH_VAMPIRISM_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6a683626g7c5ag46f6gbe69gb8c779adacb8;1"
+data "Description" "h6852d84ag6e91g41a1ga9d3g361cd9b4925f;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "Icon" "PoU_2_DreadVampirism"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM_AURA"
+data "AuraRadius" "24"
+data "AuraStatuses" "TARGET:IF(Ally() and not Dead() and Tagged('UNDEAD') and Tagged('SUMMON')):ApplyStatus(PATHOFUNDEATH_VAMPIRISM_AURAEFFECT)"
+data "Passives" "PathOfUndeath_Vampirism_AuraEffect"
+data "StatusPropertyFlags" "ApplyToDead;IgnoreResting"
+
+//Buff from above
+new entry "PATHOFUNDEATH_VAMPIRISM_AURAEFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6a683626g7c5ag46f6gbe69gb8c779adacb8;1"
+data "Description" "h90ed4201gfcdag4408ga644gde5bbf1b120a;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "Icon" "PoU_2_DreadVampirism"
+data "StackId" "PATHOFUNDEATH_VAMPIRISM_AURAEFFECT"
+data "Passives" "PathOfUndeath_Vampirism_AuraEffect"
+
+//Hidden passive for above
+new entry "PathOfUndeath_Vampirism_AuraEffect"
+type "PassiveData"
+data "DisplayName" "h6a683626g7c5ag46f6gbe69gb8c779adacb8;1"
+data "Description" "h90ed4201gfcdag4408ga644gde5bbf1b120a;1"
+data "DescriptionParams" "RegainHitPoints(1d4)"
+data "Properties" "IsHidden;OncePerAttack"
+data "StatsFunctorContext" "OnDamage"
+data "Conditions" "Character() and not Tagged('UNDEAD',context.Target) and not Dead() and not Tagged('CONSTRUCT',context.Target)"
+data "StatsFunctors" "RegainHitPoints(SELF,1d4,Undead);RegainHitPoints(SELF,1d4)"
+
+new entry "PathOfUndeath_V_Enthrall"
+type "SpellData"
+data "SpellType" "Target"
+data "TargetRadius" "3"
+data "DisplayName" "h27ac4ab2g77d0g41a9g8d33g0416752cb3f2;1"
+data "Description" "hb57b6825gb088g409eg9e9bgabafbd3d4683;1"
+data "Icon" "Action_Mag_CommandUndead_Grovel"
+data "Level" "4"
+data "SpellSchool" "Necromancy"
+data "SpellRoll" "not SavingThrow(Ability.Wisdom, SourceSpellDC())"
+data "SpellSuccess" "IF(not Ally() or Summon()):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED,100,-1);IF(Ally() and not Summon()):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED_ALLY,100,-1)"
+data "SpellFail" "IF(Ally()):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED_FAILED,100,-1)"
+data "TooltipStatusApply" "ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED,100,-1)"
+data "TargetConditions" "(Tagged('UNDEAD') or Tagged('ASTARION')) and not Self() and (not Enemy() or HasPassive('PathOfUndeath_GreaterUndeath',context.Source)) and not Dead() and not Tagged('SUMMON') and not HasStatus('PATHOFUNDEATH_V_ENTHRALLED') and not Tagged('CONTROL_UNDEAD_IMMUNE') and not CharacterLevelGreaterThan(context.Source.Level) and not HasStatus('POU_ENTHRALL_IMMUNITY') and not HasStatus('PATHOFUNDEATH_V_ENTHRALLED_WILLING')"
+data "PrepareSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3"
+data "PrepareLoopSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3_Loop"
+data "CastSound" "Spell_Cast_Buff_BladeWard_L1to3"
+data "TargetSound" "Spell_Impact_Buff_BladeWard_L1to3"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "UseCosts" "ActionPoint:1"
+data "VerbalIntent" "Debuff"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell"
+data "HitAnimationType" "MagicalNonDamage"
+data "SpellAnimation" "2f0d97b9-4a1f-4bf3-a3c2-32efb563d601,,;,,;6a95a81d-62e7-4b68-9b45-7e42e538dbde,,;815364ff-bbaa-4efc-b10e-f31043fafd6e,,;57e449b3-b712-4508-afcf-f2e91dc473f6,,;,,;84f3727f-aabc-4e34-bf31-c6cd0160bec9,,;,,;,,"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "c582c3b6-2758-4d72-81f6-e45f07519a10"
+data "TargetEffect" "e7b6ad82-c85a-40ac-9781-cb85f2dffb89"
+data "TooltipPermanentWarnings" "30386850-e78e-4b0b-9bf6-6e9860935c55"
+
+//When the saving throw is failed, the target is enthralled, losing 1 stats
+new entry "PATHOFUNDEATH_V_ENTHRALLED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "ha44021dcg5fb2g4db6g87a6gca2e0e8b7dfa;1"
+data "Description" "ha6fceaf5g3d87g48e0gb6fdgd9bf121d0d89;1"
+data "Icon" "Action_Mag_CommandUndead_Grovel"
+data "StackType" "Ignore"
+data "RemoveEvents" "OnSourceDeath"
+//data "OnApplyFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_V_ENTHRALLER,100,-1)"
+//data "OnRemoveFunctors" "RemoveStatus(SELF,PATHOFUNDEATH_V_ENTHRALLER)"
+data "Boosts" "FactionOverride(Source);Tag(UNDEAD);Tag(SUMMON);Ability(Strength,-1);Ability(Dexterity,-1);Ability(Constitution,-1);Ability(Intelligence,-1);Ability(Wisdom,-1);Ability(Charisma,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting"
+data "StatusGroups" "SG_Dominated"
+
+new entry "PATHOFUNDEATH_V_ENTHRALLED_ALLY"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_ENTHRALLED"
+data "Boosts" "Tag(UNDEAD);Tag(SUMMON);Ability(Strength,-1);Ability(Dexterity,-1);Ability(Constitution,-1);Ability(Intelligence,-1);Ability(Wisdom,-1);Ability(Charisma,-1);Tag(DONT_AUTOMATE)"
+data "StatusGroups" ""
+
+//When the target is enthralled, the caster gains 1 stats
+new entry "PATHOFUNDEATH_V_ENTHRALLER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hffe6b0c3g68aeg434cg9815gf17589e3916f;1"
+data "Description" "hc17c3f33gf410g4276g9f7agf1458ceb0d83;1"
+data "Icon" "Action_Mag_CommandUndead_Flee"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PathOfUndeath_V_ReleaseThrall);Ability(Strength,1);Ability(Dexterity,1);Ability(Constitution,1);Ability(Intelligence,1);Ability(Wisdom,1);Ability(Charisma,1)"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting"
+
+//On ally, if the saving throw is passed, the target can decide to swear allegiance to avoid further attempts at enthralling them
+new entry "PATHOFUNDEATH_V_ENTHRALLED_FAILED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hac63fc36g6b2bg494cga96cg14d633e86bb0;1"
+data "Description" "h90fbbe9cdedb45e0a36be2aea2c9e656fe76;1"
+data "Icon" "Action_Mag_CommandUndead_Flee"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PathOfUndeath_V_Submit)"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting"
+
+
+new entry "PathOfUndeath_V_Submit"
+type "SpellData"
+data "SpellType" "Target"
+using "PathOfUndeath_V_Enthrall"
+data "DisplayName" "hd1155024decd46149a05831a1099d7f958fg;1"
+data "Description" "h184f37b40b1940fd815f875bf80bd7d40f9d;1"
+data "SpellProperties" "ApplyStatus(SELF,PATHOFUNDEATH_V_ENTHRALLED_WILLING,100,-1);ApplyStatus(PATHOFUNDEATH_V_ENTHRALLER_WILLING,100,-1);RemoveStatus(SELF,PATHOFUNDEATH_V_ENTHRALLED_FAILED)"
+data "SpellRoll" ""
+data "SpellSuccess" ""
+data "SpellFail" ""
+data "TargetConditions" "HasPassive('PathOfUndeath_Vampirism')"
+data "VerbalIntent" "Buff"
+data "TooltipPermanentWarnings" ""
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell;Temporary"
+
+//By swearing allegiance, the character can get the benefits of being enthralled (tagged summon and undead) for some interactions, but not the downsides
+new entry "PATHOFUNDEATH_V_ENTHRALLED_WILLING"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hd9d45c5640e144c7971ac050e176a154b3f9;1"
+data "Description" "h5beed7a9ec7b48fea9a7132807597ce39gfa;1"
+data "Icon" "Action_Mag_CommandUndead_Grovel"
+data "StackType" "Ignore"
+data "Boosts" "Tag(UNDEAD);Tag(SUMMON);BlockRegainHP(Living);StatusImmunity(PATHOFUNDEATH_DIE);Tag(DONT_AUTOMATE)"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_LIVING)"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED_DEAD,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting"
+data "Passives" "PathOfUndeath_ShortResting"
+data "TickFunctors" "RemoveStatus(PATHOFUNDEATH_LIVING)"
+
+//The master gets unique benefits from willing servants
+new entry "PATHOFUNDEATH_V_ENTHRALLER_WILLING"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "IF(HasPassive('PathOfUndeath_Vampirism') and not HasPassive('PathOfUndeath_GreaterUndeath')):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLER_WILLING_V,100,1);IF(HasPassive('PathOfUndeath_GreaterUndeath') and not HasPassive('PathOfUndeath_Lichdom')):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLER_WILLING_G,100,1);IF(HasPassive('PathOfUndeath_Lichdom')):ApplyStatus(PATHOFUNDEATH_V_ENTHRALLER_WILLING_L,100,1)"
+data "RemoveEvents" "OnSourceDeath"
+data "OnRemoveFunctors" "SetStatusDuration(PATHOFUNDEATH_V_ENTHRALLER_WILLING_V,-1,Add);SetStatusDuration(PATHOFUNDEATH_V_ENTHRALLER_WILLING_G,-1,Add);SetStatusDuration(PATHOFUNDEATH_V_ENTHRALLER_WILLING_L,-1,Add)"
+data "StatusPropertyFlags" "DisableCombatlog;DisablePortraitIndicator;DisableOverhead;IgnoreResting;ApplyToDead"
+
+//As a vampire, the master gets +1.5m of movement per servant
+new entry "PATHOFUNDEATH_V_ENTHRALLER_WILLING_V"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hc77cd6cd930d4415ae12142156ef7d5abga2;1"
+data "Description" "hf72de0f259bf4e8b9783143feadc41ea5dc8;1"
+data "DescriptionParams" "Distance(1)"
+data "Icon" "Action_Mag_CommandUndead_Flee"
+data "Boosts" "ActionResource(Movement,1,0)"
+data "StackType" "Additive"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting;ApplyToDead;FreezeDuration;MultiplyEffectsByDuration"
+
+//As a greater undead, the master gets +1 DR per servant
+new entry "PATHOFUNDEATH_V_ENTHRALLER_WILLING_G"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_ENTHRALLER_WILLING_V"
+data "DisplayName" "h86372a6032c34fa58e2441f39d385caefegc;1"
+data "Description" "h7890692afc8c4d31ab97aa2eeb742026d00e;1"
+data "Boosts" "ActionResource(Movement,1,0);DamageReduction(All,Flat,1)"
+
+//As a lich, the master gets +1 necrotic damage per servant
+new entry "PATHOFUNDEATH_V_ENTHRALLER_WILLING_L"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_ENTHRALLER_WILLING_V"
+data "DisplayName" "h45406d21705e40f2a48e63dc866380ee3916;1"
+data "Description" "h934213e2ccb54c6e82e9fefb80b92d3d8949;1"
+data "DescriptionParams" "Distance(1);DealDamage(1,Necrotic)"
+data "Boosts" "ActionResource(Movement,1,0);DamageReduction(All,Flat,1);IF(not Ally() and not IsRedirectedDamage()):DamageBonus(1,Necrotic)"
+
+//When a servant dies, they can no longer provide benefits to their master
+//Being resurrected restores the bond
+new entry "PATHOFUNDEATH_V_ENTHRALLED_DEAD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h5bcde37f85ae4216b8c6a17d569032db99dd;1"
+data "Description" "hdb4506d2dcb94403b2c46e9211a65cf8eagf;1"
+data "Icon" "Action_Mag_CommandUndead_Grovel"
+data "StackType" "Ignore"
+data "Boosts" "Tag(UNDEAD);BlockRegainHP(Living);StatusImmunity(PATHOFUNDEATH_DIE);Tag(DONT_AUTOMATE)"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_V_ENTHRALLED_WILLING,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;IgnoreResting;ApplyToDead"
+
+new entry "POU_ENTHRALL_IMMUNITY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "StatusImmunity(PATHOFUNDEATH_V_ENTHRALLED)"
+data "StatusPropertyFlags" "DisableCombatlog;DisablePortraitIndicator;DisableOverhead;IgnoreResting;ApplyToDead"
+
+new entry "PathOfUndeath_V_ReleaseThrall"
+type "SpellData"
+data "SpellType" "Shout"
+data "DisplayName" "h0b85d372gd6c5g486cgaa8bgd2b2cb548ba1;1"
+data "Description" "h61000caegcb8fg4f7egb8b8g05482322cee1;1"
+data "Icon" "Action_Mag_CommandUndead_Drop"
+data "SpellSchool" "Necromancy"
+data "SpellProperties" "RemoveStatus(PATHOFUNDEATH_V_ENTHRALLER)"
+data "TargetConditions" "Self()"
+data "PrepareSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3"
+data "PrepareLoopSound" "Spell_Prepare_Damage_Radiant_Gen_L1to3_Loop"
+data "CastSound" "Spell_Cast_Buff_BladeWard_L1to3"
+data "TargetSound" "Spell_Impact_Buff_BladeWard_L1to3"
+data "PreviewCursor" "Cast"
+data "CastTextEvent" "Cast"
+data "UseCosts" "ActionPoint:1"
+data "VerbalIntent" "Debuff"
+data "SpellFlags" "HasVerbalComponent;HasSomaticComponent;IsSpell;Temporary"
+data "HitAnimationType" "MagicalNonDamage"
+data "SpellAnimation" "2f0d97b9-4a1f-4bf3-a3c2-32efb563d601,,;,,;6a95a81d-62e7-4b68-9b45-7e42e538dbde,,;815364ff-bbaa-4efc-b10e-f31043fafd6e,,;57e449b3-b712-4508-afcf-f2e91dc473f6,,;,,;84f3727f-aabc-4e34-bf31-c6cd0160bec9,,;,,;,,"
+data "PrepareEffect" "5d4a5adb-db3a-47ed-9c29-b84e09425921"
+data "CastEffect" "c582c3b6-2758-4d72-81f6-e45f07519a10"
+data "TargetEffect" "e7b6ad82-c85a-40ac-9781-cb85f2dffb89"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Deathsong
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Enhanced Lifedrinker giver for Deathsong
+//Makes Deathsong's Lifedrinker effect give hit points instead of heal when already full HP
+//Temporary HP can't be higher than half your max HP (should be downed at end of turn if they go above)
+new entry "PATHOFUNDEATH_V_LIFEDRINKER_DEATHSONG"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_V_LIFEDRINKER_DEATHSONG"
+data "StackPriority" "10" 
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisablePortraitIndicator;DisableOverhead;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_V_LifeDrinker_Deathsong"
+
+//Passive for display
+new entry "PathOfUndeath_V_LifeDrinker_Deathsong"
+type "PassiveData"
+data "DisplayName" "h626f3f2dgd77eg48cfgb7e7gecb4ff1eb6f0;1"
+data "Description" "h9c29e927g2e0dg4c33g8963gfc17ad7c2637;1"
+data "ExtraDescription" "hdcf81392gc07dg43b6g966bg1b314865d6d4;1"
+data "Icon" "PoU_2_EnhancedLifedrinker"
+data "Properties" "Highlighted"
+
+//Edited to make it work with it
+new entry "Siael_Lifedrinker"
+type "PassiveData"
+using "Siael_Lifedrinker"
+data "StatsFunctors" "IF(HasHPPercentageLessThan(100,context.Source)):RegainHitPoints(SELF,(DamageDone)/4);IF(HasHPPercentageLessThan(100,context.Source)):RegainHitPoints(SELF,(DamageDone)/4,Undead);IF(HasPassive('PathOfUndeath_V_LifeDrinker_Deathsong',context.Source) and not HasHPPercentageLessThan(100,context.Source) and not HasMaximumLifedrinkerHP()):ApplyStatus(SELF,SIAEL_LIFEDRINKER_THP,100,(DamageDone)/4);IF(HasPassive('PathOfUndeath_V_LifeDrinker_Deathsong',context.Source) and not HasHPPercentageLessThan(100,context.Source) and HasMaximumLifedrinkerHP()):SetStatusDuration(SELF,SIAEL_LIFEDRINKER_THP,20,ForceSet)"
+
+//Temp HP
+new entry "SIAEL_LIFEDRINKER_THP"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h748a3626g0884g4f9dg936fgbce0acc364a3;3"
+data "Description" "hc04efca3g341bg42d1gafd2g4aa5926631ea;1"
+data "DescriptionParams" "1"
+data "Icon" "statIcons_MAG_TemporaryHP"
+data "SoundLoop" "Spell_Status_Buff_MO"
+data "StackId" "SIAEL_LIFEDRINKER_THP"
+data "StackPriority" "1"
+data "StackType" "Additive"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;MultiplyEffectsByDuration"
+data "Boosts" "TemporaryHP(1)"
+data "OnApplyFunctors" "ApplyStatus(SIAEL_LIFEDRINKER_THP_TICK,100,-1)"
+data "RemoveConditions" "not HasTemporaryHP()"
+data "OnRemoveFunctors" "RemoveStatus(SIAEL_LIFEDRINKER_THP_TICK)"
+data "StatusEffect" "46164338-624c-4059-bb80-f79f8b7867a9"
+
+new entry "SIAEL_LIFEDRINKER_THP_TICK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "TickType" "EndTurn"
+data "TickFunctors" "IF(HasMaximumLifedrinkerHP()):SetStatusDuration(SIAEL_LIFEDRINKER_THP,20,ForceSet)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "SIAEL_LIFEDRINKER_DOWN"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "SetStatusDuration(SIAEL_LIFEDRINKER_THP,-1,Add)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "SIAEL_LIFEDRINKER_TEST"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnApplyFunctors" "DealDamage(1,Force,Magical,,0,,true,true,,true)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Added technical status to Deathsong swords
+new entry "Siael_Sword_1"
+type "Weapon"
+using "Siael_Sword_1"
+data "StatusOnEquip" "PATHOFUNDEATH_SMOOTH_SWORD"
+
+new entry "Siael_Sword_2"
+type "Weapon"
+using "Siael_Sword_2"
+data "StatusOnEquip" "SIAEL_DEATHSONG_SWORD_1;PATHOFUNDEATH_SMOOTH_SWORD"
+
+new entry "Siael_Sword_3"
+type "Weapon"
+using "Siael_Sword_3"
+data "StatusOnEquip" "SIAEL_DEATHSONG_SWORD_2;PATHOFUNDEATH_SMOOTH_SWORD"
+
+new entry "Siael_Sword_4"
+type "Weapon"
+using "Siael_Sword_4"
+data "StatusOnEquip" "SIAEL_DEATHSONG_SWORD_3;PATHOFUNDEATH_SMOOTH_SWORD"
+
+new entry "Siael_Sword_5"
+type "Weapon"
+using "Siael_Sword_5"
+data "StatusOnEquip" "SIAEL_DEATHSONG_SWORD_3;PATHOFUNDEATH_SMOOTH_SWORD"
+
+//Technical status serves for smooth removal of linked buff
+new entry "PATHOFUNDEATH_SMOOTH_SWORD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "OnRemoveFunctors" "RemoveStatus(PATHOFUNDEATH_V_LIFEDRINKER_DEATHSONG)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampirism special buff
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Absorb Woe to gain its power
+//Added status to staff to give the spell from inventory
+new entry "MAG_LC_CazadorVampiric_Quarterstaff"
+type "Weapon"
+using "MAG_LC_CazadorVampiric_Quarterstaff"
+data "StatusInInventory" "PATHOFUNDEATH_V_CONSUMEWOE"
+
+//Gives the spell
+new entry "PATHOFUNDEATH_V_CONSUMEWOE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "BoostConditions" ""
+data "Boosts" "IF(HasPassive('PathOfUndeath_Vampirism',context.Source) and not HasStatus('PATHOFUNDEATH_V_BUFF',context.Source)):UnlockSpell(PathOfUndeath_Consume_Woe)"
+
+//Script Extender consumes the item upon cast
+new entry "PathOfUndeath_Consume_Woe"
+type "SpellData"
+data "SpellType" "Shout"
+using "PathOfUndeath_Consume_Scourge"
+data "DisplayName" "h3411f4cdg7d46g4e20gb44fgd72275963006;1"
+data "Description" "h3dbe20f4g46acg44efg89beg2a48a5065ace;1"
+data "Icon" "PoU_2_Consume"
+data "SpellProperties" "ApplyStatus(PATHOFUNDEATH_V_BUFF,100,-1);RemoveStatus(PATHOFUNDEATH_V_CONSUMEWOE)"
+
+//Gives the staff's passives and Blight to character
+new entry "PATHOFUNDEATH_V_BUFF"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "Passives" "PathOfUndeath_ArcaneEnchantment;PathOfUndeath_CazadorStaff"
+data "Boosts" "UnlockSpell(PathOfUndeath_Target_MAG_Blight)"
+
+//Has an icon
+new entry "PathOfUndeath_ArcaneEnchantment"
+type "PassiveData"
+using "MAG_ArcaneEnchantment_Lesser_Passive"
+data "Icon" "PoU_2_ArcaneEnchantment"
+
+//Has an icon
+new entry "PathOfUndeath_CazadorStaff"
+type "PassiveData"
+using "MAG_LC_CazadorVampiric_Quarterstaff_Passive"
+data "Icon" "PoU_2_ArcaneVampirism"
+data "StatsFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_CAZADOR_STAFF, 100, 0);ApplyStatus(SELF, MAG_ARCANE_VAMPIRISM_VFX, 100, 0)"
+
+new entry "PATHOFUNDEATH_CAZADOR_STAFF"
+type "StatusData"
+data "StatusType" "BOOST"
+using "MAG_REGAIN_HP_VAMPIRISM"
+data "OnApplyFunctors" "RegainHitPoints(1d4*(ProficiencyBonus-1),Undead)"
+
+
+//Copy of Blight character can use once per day
+new entry "PathOfUndeath_Target_MAG_Blight"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_MAG_Blight"
+data "Cooldown" "OncePerRest"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampirism special buff 2
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Shadowbound
+//Removes the Enemy of the Light effect, and gain further range on Darkvision and Shadow Step
+//Obtained upen reaching the Shadowfell (via Script Extender)
+//Checker status
+new entry "PATHOFUNDEATH_V_SHADOWFELL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StackId" "PATHOFUNDEATH_V_SHADOWFELL"
+data "StackPriority" "10"
+data "Passives" "PathOfUndeath_VampirismBuff_Shadowfell;SuperiorDarkvision"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+data "ApplyEffect" "8502b53e-d2d7-4ec5-aa3b-e85f3be86991"
+data "OnApplyFunctors" "IF(Tagged('SHADOWHEART')):ApplyStatus(PATHOFUNDEATH_U_SHADOW,100,-1)"
+
+//Actual effect
+new entry "PathOfUndeath_VampirismBuff_Shadowfell"
+type "PassiveData"
+data "DisplayName" "h70e7d7f9g1c54g42d4g858cg8ed7f36615c8;1"
+data "Description" "h3a41d7f9g553ag4de1g9ae7g9dfc052b243e;1"
+data "Icon" "PoU_2_Shadowbound"
+data "Boosts" "UnlockSpellVariant(SpellId('PathOfUndeath_V_VampFlight'),ModifyTargetRadius(Override,12),ModifyTooltipDescription())"
+data "StatsFunctorContext" "OnCreate;OnTurn;OnEquip"
+data "StatsFunctors" "IF(Tagged('WARLOCK_DREAD_OVERLORD')):ApplyStatus(PATHOFUNDEATH_V_SHADOWFELL_DREAD,100,-1)"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Obtention of Dread Overlord special buff
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Stronger version of the Shadowfell buff for Dread Overlord serving characters
+//Also gives a new passive, Shadowshroud
+new entry "PATHOFUNDEATH_V_SHADOWFELL_DREAD"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_SHADOWFELL"
+data "StackPriority" "20"
+data "Passives" "PathOfUndeath_VampirismBuff_Shadowfell_Dread;DevilsSight;PathOfUndeath_VampirismBuff_Dread"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "OnRemoveFunctors" "ApplyStatus(PATHOFUNDEATH_V_SHADOWFELL,100,-1)"
+
+//Shadowshroud
+//Gives a damage reduction depending on obscurity level
+new entry "PathOfUndeath_VampirismBuff_Dread"
+type "PassiveData"
+data "DisplayName" "h35ac19f5gf937g4b71g8349g61dab158ba1f;1"
+data "Description" "h0bece37eg1e32g4755g9a1cg3f5beeaaf269;1"
+data "Icon" "PoU_2_ShadowShroud"
+data "Boosts" "IF(HasObscuredState(ObscuredState.LightlyObscured)):DamageReduction(All,Flat,2);IF(HasObscuredState(ObscuredState.HeavilyObscured) and not (InSurface('SurfaceDarknessCloud',context.Source) or HasStatus('DARKNESS_STATUS'))):DamageReduction(All,Flat,4);IF(InSurface('SurfaceDarknessCloud',context.Source) or HasStatus('DARKNESS_STATUS')):DamageReduction(All,Flat,8)"
+data "StatsFunctorContext" "OnDamaged;OnDamagePrevented"
+data "Conditions" "not HasObscuredState(ObscuredState.Clear)"
+data "StatsFunctors" "ApplyStatus(PATHOFUNDEATH_V_SHADOWFELL_HITVFX,100,0)"
+data "Properties" "Highlighted;OncePerAttack"
+
+//Subtle vfx on hit on Shadowshroud
+new entry "PATHOFUNDEATH_V_SHADOWFELL_HITVFX"
+type "StatusData"
+data "StatusType" "BOOST"
+data "SoundStart" "MAG_Status_Boost_Shadow_Obscurity_Critical"
+data "SoundLoop" "MAG_Status_Boost_Shadow_Obscurity_Critical_Loop"
+data "SoundStop" "MAG_Status_Boost_Shadow_Obscurity_Critical_Loop_Stop"
+//data "ApplyEffect" "b479d331-a4df-420e-9cbc-115e1cf10b87"
+data "ApplyEffect" "768bd17b-e59d-458b-b6ad-187db5b72313"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Shadowbound enhanced, more range on Shadow Step
+new entry "PathOfUndeath_VampirismBuff_Shadowfell_Dread"
+type "PassiveData"
+data "DisplayName" "h70e7d7f9g1c54g42d4g858cg8ed7f36615c8;1"
+data "Description" "h4e3e1766gcfcbg496cg8019g28337eaa75a2;1"
+data "Icon" "PoU_2_Shadowbound"
+data "Boosts" "UnlockSpellVariant(SpellId('PathOfUndeath_V_VampFlight'),ModifyTargetRadius(Override,16),ModifyTooltipDescription())"

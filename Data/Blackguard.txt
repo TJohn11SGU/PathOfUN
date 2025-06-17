@@ -1,0 +1,124 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Second aura choice
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "POU_BLACKGUARD_DEATHBRINGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "IF(not HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DESECRATION_TECHNICAL,100,-1);IF(HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DESECRATION_TECHNICAL_2,100,-1)"
+data "TickFunctors" "IF(HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DESECRATION_TECHNICAL_2,100,-1);IF(HasPassive('IMPROVED_AURAS')):RemoveStatus(AURA_OF_DESECRATION_TECHNICAL);IF(not HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DESECRATION_TECHNICAL,100,-1)"
+data "OnRemoveFunctors" "RemoveStatus(AURA_OF_DESECRATION_TECHNICAL);RemoveStatus(AURA_OF_DESECRATION_TECHNICAL_2)"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "POU_BLACKGUARD_SHADOWEAVER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "IF(not HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DEATH_BLOOD_TECHNICAL,100,-1);IF(HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DEATH_BLOOD_TECHNICAL_2,100,-1)"
+data "TickFunctors" "IF(HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DEATH_BLOOD_TECHNICAL_2,100,-1);IF(HasPassive('IMPROVED_AURAS')):RemoveStatus(AURA_OF_DEATH_BLOOD_TECHNICAL);IF(not HasPassive('IMPROVED_AURAS')):ApplyStatus(AURA_OF_DEATH_BLOOD_TECHNICAL,100,-1);"
+data "OnRemoveFunctors" "RemoveStatus(AURA_OF_DEATH_BLOOD_TECHNICAL);RemoveStatus(AURA_OF_DEATH_BLOOD_TECHNICAL_2)"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Improved auras unlocker
+new entry "POU_BLACKGUARD_IMPROVED_AURAS"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Passives" "IMPROVED_AURAS"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+
+new entry "AURA_OF_DEATH_BLOOD_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+using "AURA_OF_DEATH_BLOOD_TECHNICAL"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "AURA_OF_DEATH_BLOOD_TECHNICAL_2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "AURA_OF_DEATH_BLOOD_TECHNICAL_2"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "AURA_OF_DESECRATION_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+using "AURA_OF_DESECRATION_TECHNICAL"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "AURA_OF_DESECRATION_TECHNICAL_2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "AURA_OF_DESECRATION_TECHNICAL_2"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Double resistance with Umbral Resilience
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PoU_Blackguard_Necrotic"
+type "PassiveData"
+data "StatsFunctorContext" "OnCreate"
+data "StatsFunctors" "IF(HasPassive('UMBRAL_RESILIENCE') and not HasPassive('Aasimar_Fallen_Resistance') and not HasPassive('Reborn_Deathless_Feature') and not HasPassive('InuredtoUndeath')):ApplyStatus(POU_BLACKGUARD_NECROTIC,100,-1);IF(HasPassive('UMBRAL_RESILIENCE') and (HasPassive('Aasimar_Fallen_Resistance') or HasPassive('Reborn_Deathless_Feature') or HasPassive('InuredtoUndeath')) and not HasPassive('PathOfUndeath_GreaterUndeath')):ApplyStatus(POU_BLACKGUARD_NECROTIC_2,100,-1);IF(HasPassive('UMBRAL_RESILIENCE') and (HasPassive('Aasimar_Fallen_Resistance') or HasPassive('Reborn_Deathless_Feature') or HasPassive('InuredtoUndeath')) and HasPassive('PathOfUndeath_GreaterUndeath')):ApplyStatus(POU_BLACKGUARD_NECROTIC_3,100,-1)"
+data "Properties" "IsHidden"
+
+new entry "POU_BLACKGUARD_NECROTIC"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Passives" "PoU_Blackguard_Necrotic_Active"
+data "StatusGroups" "SG_RemoveOnRespec"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PoU_Blackguard_Necrotic_Active"
+type "PassiveData"
+data "DisplayName" "hcf6c2ba28cc14cd0acc30c918965ba3e1ebd;1"
+data "Description" "h2bac2ece693645189b2e5fa41dc033d362a7;1"
+data "Icon" "ICO_UMBRAL_RESILIENCE"
+data "Boosts" "DamageReduction(Necrotic,Half)"
+
+new entry "POU_BLACKGUARD_NECROTIC_2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "POU_BLACKGUARD_NECROTIC"
+data "Passives" "PoU_Blackguard_Necrotic_2_Active"
+
+new entry "PoU_Blackguard_Necrotic_2_Active"
+type "PassiveData"
+data "DisplayName" "h3076aea1ca51449abddc7c77a6f24da2945g;1"
+data "Description" "h6d054d154ea44992960e90c6e6c6626561de;1"
+data "DescriptionParams" "1"
+data "Icon" "ICO_UMBRAL_RESILIENCE"
+data "Boosts" "DamageReduction(All,Flat,1)"
+
+new entry "POU_BLACKGUARD_NECROTIC_3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "POU_BLACKGUARD_NECROTIC"
+data "Passives" "PoU_Blackguard_Necrotic_3_Active"
+
+new entry "PoU_Blackguard_Necrotic_3_Active"
+type "PassiveData"
+data "DisplayName" "h3076aea1ca51449abddc7c77a6f24da2945g;1"
+data "Description" "h6d054d154ea44992960e90c6e6c6626561de;1"
+data "DescriptionParams" "2"
+data "Icon" "ICO_UMBRAL_RESILIENCE"
+data "Boosts" "DamageReduction(All,Flat,2)"
+
+new entry "MEND_UNDEAD_LESSER"
+type "StatusData"
+data "StatusType" "BOOST"
+using "MEND_UNDEAD_LESSER"
+data "OnApplyFunctors" "TARGET:IF(not Tagged('UNDEAD')):RegainHitPoints(2*ClassLevel(Blackguard));TARGET:IF(Tagged('UNDEAD')):RegainHitPoints(2*ClassLevel(Blackguard),Undead)"
+
+new entry "MEND_UNDEAD_GREATER"
+type "StatusData"
+data "StatusType" "BOOST"
+using "MEND_UNDEAD_GREATER"
+data "OnApplyFunctors" "TARGET:IF(not Tagged('UNDEAD')):RegainHitPoints(4*ClassLevel(Blackguard));TARGET:IF(Tagged('UNDEAD')):RegainHitPoints(4*ClassLevel(Blackguard),Undead)"
+
+

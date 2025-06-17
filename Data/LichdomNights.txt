@@ -1,0 +1,185 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Lich
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_L_NIGHT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Surge of Power
+//+2 to a random Ability
+new entry "PATHOFUNDEATH_L_NIGHT_1_STR"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Strength,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_L_NIGHT_1_DEX"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Dexterity,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_L_NIGHT_1_CON"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Constitution,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_L_NIGHT_1_INT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Intelligence,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_L_NIGHT_1_WIS"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Wisdom,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_L_NIGHT_1_CHA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6b6dc1cbg8c10g4909g9191g032fa108d845;1"
+data "Description" "he89cc48bg8b51g4d4ega99dg179e19a4d84f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Ability(Charisma,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_L_N1"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_L_C1"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+data "StackId" "PATHOFUNDEATH_L_C"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Dominion
+//Nearby undead ally summons get a bonus to Attack Rolls equal to your Proficiency Bonus
+new entry "PATHOFUNDEATH_L_NIGHT_2"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hd279bec5g595dg401dgbf8dg0e660c176b6c;1"
+data "Description" "h3bf693c1gc653g4c8ag980fg713a65a2005d;1"
+data "Icon" "PoU_Dream"
+data "AuraRadius" "5"
+data "AuraStatuses" "TARGET:IF(Ally() and not Dead() and Tagged('UNDEAD') and Tagged('SUMMON')):ApplyStatus(PATHOFUNDEATH_L_NIGHT_2_EFFECT)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead;TickingWithSource"
+
+new entry "PATHOFUNDEATH_L_NIGHT_2_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hd279bec5g595dg401dgbf8dg0e660c176b6c;1"
+data "Description" "h3bf693c1gc653g4c8ag980fg713a65a2005d;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "RollBonus(Attack,Owner.ProficiencyBonus)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_L_N2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_L_C2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_C1"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Relentless Ascension
+//Reroll 1s, take best result
+new entry "PATHOFUNDEATH_L_NIGHT_3"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h2768be90gaacag4595g8218g031e27506bdc;1"
+data "Description" "h26cc75beg3499g4c88gaf05gb4ef4e95f22f;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Reroll(Attack,1,false);Reroll(SkillCheck,1,false);Reroll(RawAbility,1,false);Reroll(SavingThrow,1,false);Reroll(Damage,1,false)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_L_N3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_L_C3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Contemplation of Eternity
+//+25% HP
+new entry "PATHOFUNDEATH_L_NIGHT_4"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h11af7e9dga041g4156gb63bg730666ce461b;1"
+data "Description" "h23f9e70agd6e8g49ddgb93dg6abb0012f8e8;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "IncreaseMaxHP(MaxHP/4)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_L_N4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_L_C4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Solace of the Moment
+//+1 to Skill and Attribute checks, and Saving throws
+new entry "PATHOFUNDEATH_L_NIGHT_5"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h4c664120gae8bg4403gb3bag81a55adae129;1"
+data "Description" "h815d5921ge6ebg4734g9497g23e7f330f252;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "RollBonus(SkillCheck,1);RollBonus(RawAbility,1);RollBonus(SavingThrow,1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_L_N5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_L_C5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_L_C1"

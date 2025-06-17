@@ -1,0 +1,214 @@
+//Makes playable characters not naturally immune to undead healing
+new entry "_Hero"
+type "Character"
+using "_Hero"
+data "DefaultBoosts" "BlockRegainHP(Construct)"
+
+//Makes characters immune to undead healing
+//Applied by SE on session load
+new entry "PATHOFUNDEATH_LIVING"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6e625364g3c74g4e2bg9af1g4ea812a4b836;1"
+data "Boosts" "BlockRegainHP(Undead)"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_U_TECHNICAL,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Makes characters immune to regular healing
+//Applied by SE on becoming undead
+new entry "PATHOFUNDEATH_UNDEAD"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "he4fae0bbg9dc3g4c19ga08bg25f14a35f9e6;1"
+data "Boosts" "Tag(UNDEAD);BlockRegainHP(Living);StatusImmunity(PATHOFUNDEATH_DIE)"
+data "TickFunctors" "ApplyStatus(PATHOFUNDEATH_VARIABLE,100,-1);IF(not HasStatus('DREADOVERLORD_SOULSHIELD_FREEACTION')):ApplyStatus(PATHOFUNDEATH_U_DEFILER,100,-1)"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_U_DEFILER,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_VARIABLE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "SIAEL_SURVIVAL_INSTINCT_HEAL"
+type "StatusData"
+data "StatusType" "BOOST"
+using "SIAEL_SURVIVAL_INSTINCT_HEAL"
+data "OnApplyFunctors" "RegainHitPoints(SIAEL_SURVIVAL_INSTINCT_TECHNICAL.Duration);RegainHitPoints(SIAEL_SURVIVAL_INSTINCT_TECHNICAL.Duration,Undead);RemoveStatus(SIAEL_SURVIVAL_INSTINCT_TECHNICAL)"
+
+new entry "SIAEL_SURVIVAL_INSTINCT_HEAL_2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "SIAEL_SURVIVAL_INSTINCT_HEAL_2"
+data "OnApplyFunctors" "RegainHitPoints(SIAEL_SURVIVAL_INSTINCT_TECHNICAL.Duration-1);RegainHitPoints(SIAEL_SURVIVAL_INSTINCT_TECHNICAL.Duration-1,Undead);RemoveStatus(SIAEL_SURVIVAL_INSTINCT_TECHNICAL)"
+
+new entry "Siael_LifePunction"
+type "SpellData"
+data "SpellType" "Target"
+using "Siael_LifePunction"
+data "SpellProperties" "DealDamage(context.Target.CurrentHP/5);RegainHitPoints(SELF,DamageDone);RegainHitPoints(SELF,DamageDone,Undead)"
+
+new entry "PATHOFUNDEATH_HELSIK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Nightmares & Dreams
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Passive that causes nightmares & dreams
+new entry "PathOfUndeath_Nightmares"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnLongRest"
+data "StatsFunctors" "IF(not HasPassive('PathOfUndeath_GreaterUndeath') and not HasStatus('HAG_WILTED_DREAMS')):ApplyStatus(PATHOFUNDEATH_V_NIGHT,100,0);IF(HasPassive('PathOfUndeath_GreaterUndeath') and not HasPassive('PathOfUndeath_Lichdom')):ApplyStatus(PATHOFUNDEATH_G_NIGHT,100,0);IF(HasPassive('PathOfUndeath_Lichdom')):ApplyStatus(PATHOFUNDEATH_L_NIGHT,100,0)"
+
+//Tracker for the Noblestalk
+//Prevents Nightmares
+new entry "PATHOFUNDEATH_NOBLESTALK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Triggers
+//-------------------------------------------------------------------------------------------------------------------------------------
+//Shadowfell
+new entry "PATHOFUNDEATH_SHADOWFELL_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "6"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_SHADOWFELL_TRIGGER)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PATHOFUNDEATH_SHADOWFELL_TRIGGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Cazador
+new entry "PATHOFUNDEATH_CAZADOR_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "20"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_CAZADOR_TRIGGER,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PATHOFUNDEATH_CAZADOR_TRIGGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_CAZADOR_CHECKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Mystic Carrion
+new entry "PATHOFUNDEATH_CARRION_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "3"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_CARRION_TRIGGER,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PATHOFUNDEATH_CARRION_TRIGGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_CARRION_CHECKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Stormshore Tabernacle altar
+new entry "PATHOFUNDEATH_TABERNACLE_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "4"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_TABERNACLE_TRIGGER,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PATHOFUNDEATH_TABERNACLE_TRIGGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_TABERNACLE_CHECKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_TABERNACLE_COMMIT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_TABERNACLE_CHECKER,100,-1)"
+data "AuraRadius" "4"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_TABERNACLE_TECHNICAL)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_TABERNACLE_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Ansur
+new entry "PATHOFUNDEATH_ANSUR_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "AuraRadius" "5"
+data "AuraStatuses" "ApplyStatus(PATHOFUNDEATH_ANSUR_TRIGGER_TECHNICAL)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead;IgnoreResting"
+
+new entry "PATHOFUNDEATH_ANSUR_TRIGGER_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_ANSUR_TRIGGER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "Boosts" "UnlockSpell(PathOfUndeath_SummonUnholyChallenge)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+new entry "PATHOFUNDEATH_CHALLENGED"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_ANSUR_TRIGGER)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Container checker
+new entry "PATHOFUNDEATH_CHECKER"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+new entry "Target_Heal"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Heal"
+data "TargetConditions" "Character() and not Dead() and (not Tagged('UNDEAD') or HasPassive('Background_HauntedOne')) and not Tagged('CONSTRUCT')"

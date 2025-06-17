@@ -1,0 +1,11 @@
+new entry "HEXBLADES_CURSE_CASTER_HEAL"
+type "StatusData"
+data "StatusType" "BOOST"
+using "HEXBLADES_CURSE_CASTER_HEAL"
+data "OnApplyFunctors" "RegainHitPoints(ClassLevel(Warlock)+Cause.CharismaModifier);RegainHitPoints(ClassLevel(Warlock)+Cause.CharismaModifier,Undead)"
+
+new entry "Target_SoulDevour_Specter"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_SoulDevour_Specter"
+data "SpellSuccess" "DealDamage(2d6,Necrotic,Magical);RegainHitPoints(OWNER,(DamageDone)/2);RegainHitPoints(OWNER,(DamageDone)/2,Undead)"

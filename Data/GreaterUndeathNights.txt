@@ -1,0 +1,362 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Greater Undead
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_G_NIGHT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Whispering Void
+//Disadvantage on Stealth checks while obscured
+new entry "PATHOFUNDEATH_G_NIGHT_1"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h08134c27gca63g4e12g8b95gfac8dfd5f4cb;1"
+data "Description" "hcf603dd9g4be6g491dg8900g53aba2d0f5a7;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "IF(not HasObscuredState(ObscuredState.Clear)):Disadvantage(Skill,Stealth)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N1"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C1"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+data "StackId" "PATHOFUNDEATH_G_C"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Forgotten Reflection
+//-1 Charisma
+new entry "PATHOFUNDEATH_G_NIGHT_2"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h657b0dd8g504dg4cadg8f75g446f7e86002e;1"
+data "Description" "h90d96f05g3ffcg44c7g9e08g9ae1ccbd708c;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Ability(Charisma,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Plague
+//Can't use Bonus Action
+new entry "PATHOFUNDEATH_G_NIGHT_3"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h0982a95bg4a1eg425fg8ebega8360df23cba;1"
+data "Description" "haa67224fg7466g4500g9657ga96f41936955;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "ActionResourceBlock(BonusActionPoint)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Oasis
+//Sanctuary until you attack
+//Refreshes after combat
+new entry "PATHOFUNDEATH_G_NIGHT_4"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "he98a546dgfb8bg48caga5e2gb3d35be83fb6;1"
+data "Description" "h0b0e534fg5fedg4448g8cefga599d1b64474;1"
+data "Icon" "PoU_Dream"
+data "OnApplyFunctors" "ApplyStatus(PATHOFUNDEATH_SANCTUARY,100,-1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_SANCTUARY"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "he98a546dgfb8bg48caga5e2gb3d35be83fb6;1"
+data "Description" "h0b0e534fg5fedg4448g8cefga599d1b64474;1"
+data "Icon" "PoU_Dream"
+data "StackType" "Ignore"
+data "Boosts" "IgnoreDamageThreshold(All,5)"
+data "Passives" "PoU_Sanctuary"
+data "StatusPropertyFlags" "ApplyToDead"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_SANCTUARY_TECHNICAL)"
+data "OnRemoveFunctors" "IF(HasStatus('PATHOFUNDEATH_G_NIGHT_4')):ApplyStatus(PATHOFUNDEATH_SANCTUARY_TECHNICAL,100,-1)"
+
+new entry "PoU_Sanctuary"
+type "PassiveData"
+data "Properties" "IsHidden"
+data "StatsFunctorContext" "OnDamage"
+data "StatsFunctors" "RemoveStatus(SELF,PATHOFUNDEATH_SANCTUARY)"
+
+new entry "PATHOFUNDEATH_SANCTUARY_TECHNICAL"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_SANCTUARY)"
+data "OnRemoveFunctors" "IF(HasStatus('PATHOFUNDEATH_G_NIGHT_4')):ApplyStatus(PATHOFUNDEATH_SANCTUARY,100,-1)"
+data "RemoveEvents" "OnCombatEnded"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Peaceful Forest
+//Add Proficiency Bonus to Charisma checks
+new entry "PATHOFUNDEATH_G_NIGHT_5"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hdbeca891g55b5g4793ga096ga117701d2053;1"
+data "Description" "h86f7fbf7g9684g43edgb823gf4fb11abb596;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "RollBonus(RawAbility,ProficiencyBonus,Charisma);RollBonus(SkillCheck, ProficiencyBonus, Deception);RollBonus(SkillCheck, ProficiencyBonus, Intimidation);RollBonus(SkillCheck, ProficiencyBonus, Performance);RollBonus(SkillCheck, ProficiencyBonus, Persuasion)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Inner Library
+//Advantage on Arcana, History and Religion checks
+new entry "PATHOFUNDEATH_G_NIGHT_6"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h7d5dd86eg889eg4ec5g9ccfg1e9c6ed8f6e2;1"
+data "Description" "h8f9c4163g9fa3g420dg9332g2a30d74ec2e2;1"
+data "Icon" "PoU_Dream"
+data "Boosts" "Advantage(Skill,Arcana);Advantage(Skill,History);Advantage(Skill,Religion)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N6"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C6"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Wolf Among Sheep
+//When an enemy enters your territory, they must succeed a wisdom saving throw or be Frightened for the turn
+//Good Dark Urge only
+new entry "PATHOFUNDEATH_G_NIGHT_7"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hf8d22b7eg4dddg438dgaf26g2ecd5023cbff;1"
+data "Description" "hf253c2f0ga853g4be0g935bg95b3e1756eeb;1"
+data "Icon" "PoU_Dream"
+data "AuraRadius" "3"
+data "AuraStatuses" "TARGET:IF(Enemy() and not Dead()):ApplyStatus(PATHOFUNDEATH_G_NIGHT_7_EFFECT)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead;TickingWithSource"
+
+new entry "PATHOFUNDEATH_G_NIGHT_7_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "DisplayName" "hf8d22b7eg4dddg438dgaf26g2ecd5023cbff;1"
+data "Description" "hf253c2f0ga853g4be0g935bg95b3e1756eeb;1"
+data "Icon" ""
+data "OnApplyRoll" "not SavingThrow(Ability.Wisdom,12)"
+data "OnApplySuccess" "ApplyStatus(FRIGHTENED,100,1)"
+data "OnTickRoll" "not SavingThrow(Ability.Wisdom,12)"
+data "OnTickSuccess" "ApplyStatus(FRIGHTENED,100,1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;TickingWithSource"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N7"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C7"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Harbinger of Death
+//When killing an enemy, enter Frenzy
+//Bad Dark Urge only
+new entry "PATHOFUNDEATH_G_NIGHT_8"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h5f27543dgcabag4940g9545g29ea48e7bdfe;1"
+data "Description" "h59eaf404gaf91g4dc9ga2d0gad090f35395c;1"
+data "Icon" "PoU_Dream"
+data "Passives" "PathOfUndeath_G_NIGHT_8"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead;TickingWithSource"
+
+new entry "PathOfUndeath_G_NIGHT_8"
+type "PassiveData"
+data "DisplayName" "h5f27543dgcabag4940g9545g29ea48e7bdfe;1"
+data "Description" "h59eaf404gaf91g4dc9ga2d0gad090f35395c;1"
+data "Icon" "PoU_Dream"
+data "StatsFunctorContext" "OnDamage;OnStatusApply"
+data "Conditions" "IsKillingBlow() and Enemy()"
+data "StatsFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_G_NIGHT_8_EFFECT,100,2)"
+data "Properties" "IsHidden"
+
+new entry "PATHOFUNDEATH_G_NIGHT_8_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h5f27543dgcabag4940g9545g29ea48e7bdfe;1"
+data "Description" "h59eaf404gaf91g4dc9ga2d0gad090f35395c;1"
+data "DescriptionParams" "2"
+data "Icon" "Action_Barbarian_Frenzy"
+data "SoundLoop" "Spell_Status_Rage"
+data "SoundStop" "Spell_Status_Rage_Stop"
+data "StatusSoundState" "7adcc1d1-6d19-4480-bc2e-0913164285ca"
+data "TickType" "EndTurn"
+data "Boosts" "Tag(VFX_RAGE);Attribute(ForceMainhandAlternativeEquipBones);IF(IsAttackType(AttackType.MeleeWeaponAttack)):CharacterWeaponDamage(2);EntityThrowDamage(2);IF(IsAttackType(AttackType.MeleeOffHandWeaponAttack)):CharacterWeaponDamage(2);CharacterUnarmedDamage(2);IF(IsAttackType(AttackType.MeleeWeaponAttack)):RollBonus(Attack,2);IF(IsAttackType(AttackType.MeleeOffHandWeaponAttack)):RollBonus(Attack,2)"
+data "StackType" "Overwrite"
+data "StatusPropertyFlags" "UnavailableInActiveRoll"
+data "StatusGroups" "SG_Rage"
+data "StatusEffect" "30fd26c7-1a1e-4328-9a9a-38c0f55be597"
+data "TooltipPermanentWarnings" "5b0c1209-0e18-49a0-bec6-df484d977300"
+data "DynamicAnimationTag" "b6aa23c3-c96d-42d5-8ffa-8d441d18faa7"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N8"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C8"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Candy Weapon
+//-1d6 to Attack rolls, take 2d6 Psychic on missed attacks (can't kill you)
+//Bad Dark Urge only
+new entry "PATHOFUNDEATH_G_NIGHT_9"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h2eb328d9g6a3dg4b77gafd5g28711322d765;1"
+data "Description" "heb738e65gff03g4316gb128g55c5986ff556;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "RollBonus(Attack,0-1d6)"
+data "Passives" "PathOfUndeath_G_NIGHT_9"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PathOfUndeath_G_NIGHT_9"
+type "PassiveData"
+data "DisplayName" "h2eb328d9g6a3dg4b77gafd5g28711322d765;1"
+data "Description" "heb738e65gff03g4316gb128g55c5986ff556;1"
+data "Icon" "PoU_Nightmare"
+data "StatsFunctorContext" "OnAttack"
+data "Conditions" "Enemy() and IsMiss() or IsCriticalMiss()"
+data "StatsFunctors" "DealDamage(SELF,2d6,Psychic,Nonmagical,Nonlethal,0,,true)"
+data "Properties" "IsHidden"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N9"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C9"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Evil Within
+//Every minute, you get to pass a Charisma saving throw against becoming mad for a turn, until you get Content/Happy
+//Good Dark Urge only
+new entry "PATHOFUNDEATH_G_NIGHT_10"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h4cf23c3dgae64g42bbga2f9g5f5e853c34ec;1"
+data "Description" "h99226d87ga5abg4800ga128g381396eab043;1"
+data "Icon" "PoU_Nightmare"
+data "TickFunctors" "IF(not HasStatus('PATHOFUNDEATH_V_HAPPY') and not HasStatus('ASTARION_HAPPY')):ApplyStatus(PATHOFUNDEATH_G_NIGHT_10_STACK,100,1)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+
+new entry "PATHOFUNDEATH_G_NIGHT_10_STACK"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h4cf23c3dgae64g42bbga2f9g5f5e853c34ec;1"
+data "Description" "h99226d87ga5abg4800ga128g381396eab043;1"
+data "Icon" "PoU_Nightmare"
+data "StackId" "PATHOFUNDEATH_G_NIGHT_10_STACK"
+data "StackType" "Additive"
+data "TickFunctors" "IF(StatusDurationEqualOrMoreThan(context.Source,'PATHOFUNDEATH_G_NIGHT_10_STACK',10)):ApplyStatus(PATHOFUNDEATH_G_NIGHT_10_EFFECT,100,0)"
+data "StatusPropertyFlags" "FreezeDuration;DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+data "RemoveEvents" "OnStatusApplied"
+data "RemoveConditions" "StatusId('PATHOFUNDEATH_V_HAPPY') or StatusId('ASTARION_HAPPY')"
+
+new entry "PATHOFUNDEATH_G_NIGHT_10_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h4cf23c3dgae64g42bbga2f9g5f5e853c34ec;1"
+data "Description" "h99226d87ga5abg4800ga128g381396eab043;1"
+data "Icon" "PoU_Nightmare"
+data "OnApplyFunctors" "RemoveStatus(PATHOFUNDEATH_G_NIGHT_10_STACK)"
+data "OnApplyRoll" "SavingThrow(Ability.Wisdom,15)"
+data "OnApplyFail" "ApplyStatus(MADNESS,100,2)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Used indicator
+new entry "PATHOFUNDEATH_G_N10"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_G_C10"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_G_C1"

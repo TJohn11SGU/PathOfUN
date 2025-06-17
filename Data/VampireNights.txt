@@ -1,0 +1,338 @@
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vampire
+//-----------------------------------------------------------------------------------------------------------------------------------------
+new entry "PATHOFUNDEATH_V_NIGHT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Warmth Longing
+//Vulnerable to Cold
+new entry "PATHOFUNDEATH_V_NIGHT_1"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h075b903bg3ad4g4929gb795gc1742578add9;1"
+data "Description" "h34a32cd8g169bg48ddgadebg9afc10d25a6e;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Resistance(Cold, Vulnerable)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N1"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C1"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackId" "PATHOFUNDEATH_V_C"
+data "StackType" "Overwrite"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator;IgnoreResting;ApplyToDead"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vision of Wither
+//Disadvantage on Persuasion, Performance and Deception checks
+new entry "PATHOFUNDEATH_V_NIGHT_2"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "he1e9f371ge05fg447eg9141g14945cdd341b;1"
+data "Description" "h74d4924bg0575g4315ga602g81dd810065b5;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Disadvantage(Skill,Persuasion);Disadvantage(Skill,Performance);Disadvantage(Skill,Deception)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C2"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Decaying Flesh
+//Vulnerable to Acid
+new entry "PATHOFUNDEATH_V_NIGHT_3"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6178730ag7b6ag449egab53g2dfc160cb96e;1"
+data "Description" "h97b01378g83c8g4c36g96abgbf56428ba465;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Resistance(Acid, Vulnerable)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C3"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Lost Innocence
+//Disadvantage on Concentration checks when near ally undead minions
+new entry "PATHOFUNDEATH_V_NIGHT_4"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h4664fdd1g4efeg47fbgae38g503ef6b066b4;1"
+data "Description" "he3c47c33gbe37g4138g81d4gdcf1d401cee6;1"
+data "Icon" "PoU_Nightmare"
+data "AuraRadius" "3"
+data "AuraStatuses" "TARGET:IF(Ally() and Tagged('SUMMON') and Tagged('UNDEAD') and not Dead() and not HasStatus('SG_Incapacitated')):ApplyStatus(PATHOFUNDEATH_V_NIGHT_4_RESPONSE)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+new entry "PATHOFUNDEATH_V_NIGHT_4_RESPONSE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_V_NIGHT_4_EFFECT,100,-1)"
+data "OnRemoveFunctors" "RemoveStatus(SELF,PATHOFUNDEATH_V_NIGHT_4_EFFECT)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PATHOFUNDEATH_V_NIGHT_4_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "DisplayName" "h4664fdd1g4efeg47fbgae38g503ef6b066b4;1"
+data "Description" "he3c47c33gbe37g4138g81d4gdcf1d401cee6;1"
+data "Boosts" "Disadvantage(Concentration)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C4"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Rotten Feast
+//-25% HP
+new entry "PATHOFUNDEATH_V_NIGHT_5"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h98d8e89dgbebeg4dc7g95e8g57608fa9abff;1"
+data "Description" "he44e16c9g5fceg40a9gb12eg226c97b62dd2;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "IncreaseMaxHP(-(MaxHP/4))"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C5"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Vivisection
+//Vulnerable to Slashing
+new entry "PATHOFUNDEATH_V_NIGHT_6"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "he49dfe2agb2abg4938g8e16g17f2159f16a2;1"
+data "Description" "h00655754g4077g4bc8g958aga2a90ac33b2f;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Resistance(Slashing,Vulnerable)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N6"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C6"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Brittle Skin
+//Vulnerable to Bludgeoning
+new entry "PATHOFUNDEATH_V_NIGHT_7"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "hc952501fg9d98g41cfg9e9dgeaa5bd82f286;1"
+data "Description" "h2cb84f93g7aacg46efga8b3g347e096b3f0d;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "Resistance(Bludgeoning,Vulnerable)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N7"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C7"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Buried Alive 
+//Frightened by nearby uses of a shovel
+//Can take psychic damage if uses shovel themselves
+new entry "PATHOFUNDEATH_V_NIGHT_8"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6fed0bc2g6a7ag4556gb5c5gfd38a57125ff;1"
+data "Description" "h64f6b9d7ga63bg4feagaeedga22c7eed3b0c;1"
+data "Icon" "PoU_Nightmare"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N8"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C8"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+//Added effect to Dig
+new entry "Target_Dig"
+type "SpellData"
+using "Target_Dig"
+data "SpellProperties" "ApplyStatus(SELF,PATHOFUNDEATH_V_NIGHT_8_AURA,100,1)"
+
+new entry "PATHOFUNDEATH_V_NIGHT_8_AURA"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6fed0bc2g6a7ag4556gb5c5gfd38a57125ff;1"
+data "Description" "h64f6b9d7ga63bg4feagaeedga22c7eed3b0c;1"
+data "Icon" "PoU_Nightmare"
+data "OnApplyFunctors" "IF(HasStatus('PATHOFUNDEATH_V_NIGHT_8',context.Source)):ApplyStatus(PATHOFUNDEATH_V_NIGHT_8_DAMAGE,100,0)"
+data "AuraRadius" "12"
+data "AuraStatuses" "TARGET:IF(HasStatus('PATHOFUNDEATH_V_NIGHT_8')):ApplyStatus(PATHOFUNDEATH_V_NIGHT_8_FEAR,100,0)"
+data "StatusPropertyFlags" "DisableOverhead;DisablePortraitIndicator;DisableCombatlog"
+
+new entry "PATHOFUNDEATH_V_NIGHT_8_DAMAGE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6fed0bc2g6a7ag4556gb5c5gfd38a57125ff;1"
+data "Description" "h64f6b9d7ga63bg4feagaeedga22c7eed3b0c;1"
+data "Icon" "PoU_Nightmare"
+data "OnApplyFunctors" "IF(not SavingThrow(Ability.Wisdom,15)):DealDamage(2d8,Psychic)"
+data "StatusPropertyFlags" "DisableOverhead;DisablePortraitIndicator"
+
+new entry "PATHOFUNDEATH_V_NIGHT_8_FEAR"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h6fed0bc2g6a7ag4556gb5c5gfd38a57125ff;1"
+data "Description" "h64f6b9d7ga63bg4feagaeedga22c7eed3b0c;1"
+data "Icon" "PoU_Nightmare"
+data "OnApplyFunctors" "IF(not SavingThrow(Ability.Wisdom,15)):ApplyStatus(FEARED,100,2)"
+data "StatusPropertyFlags" "DisableOverhead;DisablePortraitIndicator"
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Failed the Clan 
+//Can't react when near allies
+new entry "PATHOFUNDEATH_V_NIGHT_9"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h2489275egb95cg4b59gac2cge888ac80aba6;1"
+data "Description" "he5a315e1gc8a3g423bga53eg930a1cc2b7f2;1"
+data "Icon" "PoU_Nightmare"
+data "AuraRadius" "3"
+data "AuraStatuses" "IF(Ally() and not Tagged('SUMMON') and not Dead() and not HasStatus('SG_Incapacitated')):ApplyStatus(PATHOFUNDEATH_V_NIGHT_9_RESPONSE)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+new entry "PATHOFUNDEATH_V_NIGHT_9_RESPONSE"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "OnApplyFunctors" "ApplyStatus(SELF,PATHOFUNDEATH_V_NIGHT_9_EFFECT,100,-1)"
+data "OnRemoveFunctors" "RemoveStatus(SELF,PATHOFUNDEATH_V_NIGHT_9_EFFECT)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+new entry "PATHOFUNDEATH_V_NIGHT_9_EFFECT"
+type "StatusData"
+data "StatusType" "BOOST"
+data "StackType" "Ignore"
+data "DisplayName" "h2489275egb95cg4b59gac2cge888ac80aba6;1"
+data "Description" "he5a315e1gc8a3g423bga53eg930a1cc2b7f2;1"
+data "Icon" "PoU_Nightmare"
+data "Boosts" "ActionResourceBlock(ReactionActionPoint)"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;DisablePortraitIndicator"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N9"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C9"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Sewn Lips 
+//Silenced and Disadvantage on charisma skill checks
+new entry "PATHOFUNDEATH_V_NIGHT_10"
+type "StatusData"
+data "StatusType" "BOOST"
+data "DisplayName" "h3aa46ab2g72adg49c8ga871gce8b2285428d;1"
+data "Description" "h24067598gd8acg483cga679gd2bfc0f72a97;1"
+data "Icon" "PoU_Nightmare"
+data "StackId" "SILENCED"
+data "StackPriority" "1"
+data "Boosts" "BlockVerbalComponent();DialogueBlock()"
+data "StatusPropertyFlags" "DisableCombatlog;DisableOverhead;ApplyToDead"
+data "ApplyEffect" "5c53ef4c-bd94-4567-94c1-8b1a8cefa7e3"
+
+//Used indicator
+new entry "PATHOFUNDEATH_V_N10"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_N1"
+
+//Last used indicator
+new entry "PATHOFUNDEATH_V_C10"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PATHOFUNDEATH_V_C1"

@@ -1,0 +1,170 @@
+new entry "Target_Harm2e_BonusAction"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(1d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(1d8,Undead)"
+
+
+new entry "Target_Harm2e_BonusAction_2"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_2"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(2d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(2d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_3"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_3"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(3d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(3d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_4"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_4"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(4d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(4d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_5"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_5"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(5d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(5d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_6"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_6"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(6d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(6d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_7"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_7"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(7d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(7d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_8"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_8"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(8d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(8d8,Undead)"
+
+new entry "Target_Harm2e_BonusAction_9"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_BonusAction_9"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(9d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(9d8,Undead)"
+
+new entry "Target_Harm2e_Action"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(1d8+8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(1d8+8,Undead)"
+
+new entry "Target_Harm2e_Action_2"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_2"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(2d8+16);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(2d8+16,Undead)"
+
+new entry "Target_Harm2e_Action_3"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_3"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(3d8+24);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(3d8+24,Undead)"
+
+new entry "Target_Harm2e_Action_4"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_4"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(4d8+32);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(4d8+32,Undead)"
+
+new entry "Target_Harm2e_Action_5"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_5"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(5d8+40);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(5d8+40,Undead)"
+
+new entry "Target_Harm2e_Action_6"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_6"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(6d8+48);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(6d8+48,Undead)"
+
+new entry "Target_Harm2e_Action_7"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_7"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(7d8+56);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(7d8+56,Undead)"
+
+new entry "Target_Harm2e_Action_8"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_8"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(8d8+64);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(8d8+64,Undead)"
+
+new entry "Target_Harm2e_Action_9"
+type "SpellData"
+data "SpellType" "Target"
+using "Target_Harm2e_Action_9"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(9d8+72);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(9d8+72,Undead)"
+
+new entry "Shout_Harm2e_FR"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(1d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(1d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_2"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_2"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(2d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(2d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_3"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_3"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(3d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(3d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_4"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_4"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(4d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(4d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_5"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_5"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(5d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(5d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_6"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_6"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(6d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(6d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_7"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_7"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(7d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(7d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_8"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_8"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(8d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(8d8,Undead)"
+
+
+new entry "Shout_Harm2e_FR_9"
+type "SpellData"
+data "SpellType" "Shout"
+using "Shout_Harm2e_FR_9"
+data "SpellProperties" "IF(Tagged('UNDEAD')):RegainHitPoints(9d8);IF(HasStatus('PATHOFUNDEATH_UNDEAD')):RegainHitPoints(9d8,Undead)"

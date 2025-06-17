@@ -1,0 +1,9 @@
+new entry "DreadOverlord_ProfaneBlessing_CorruptedStaff"
+type "PassiveData"
+using "DreadOverlord_ProfaneBlessing_CorruptedStaff"
+data "StatsFunctors" "IF((HasPassive('MAG_GreaterNecromancyStaff_LifeEssenceHarvest_Passive',context.Source) or HasPassive('PathOfUndeath_G_LifeEssenceHarvest',context.Source)) and not HasStatus('DREADOVERLORD_PROFANEBLESSING_CORRUPTEDSTAFF',context.Source)):ApplyStatus(SELF,DREADOVERLORD_PROFANEBLESSING_CORRUPTEDSTAFF,100,-1)"
+
+new entry "DreadOverlord_ProfaneBlessing_CorruptedStaff_TECHNICAL"
+type "PassiveData"
+using "DreadOverlord_ProfaneBlessing_CorruptedStaff_TECHNICAL"
+data "StatsFunctors" "IF(not HasPassive('MAG_GreaterNecromancyStaff_LifeEssenceHarvest_Passive',context.Source) and not HasPassive('PathOfUndeath_G_LifeEssenceHarvest',context.Source) and HasStatus('DREADOVERLORD_PROFANEBLESSING_CORRUPTEDSTAFF',context.Source)):RemoveStatus(SELF,DREADOVERLORD_PROFANEBLESSING_CORRUPTEDSTAFF)"

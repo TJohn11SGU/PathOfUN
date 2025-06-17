@@ -1,0 +1,7 @@
+new entry "CHR_Target_Heal_FleshGolem"
+type "SpellData"
+data "SpellType" "Target"
+using "CHR_Target_Heal_FleshGolem"
+data "SpellProperties" "IF(not HasStatus('CHR_GREATER_NECROMANCY_TECHNICAL',context.Source)):ApplyStatus(CHR_LEGENDARY_CHROMATIC_ATTUNEMENT_NECROTIC,100,-1);ApplyStatus(SELF,CHR_GREATER_NECROMANCY_TECHNICAL,100,-1);RegainHitPoints(2d6);RegainHitPoints(2d6,Undead);DealDamage(SELF,6d6,Piercing)"
+data "TargetConditions" "Character() and not Dead() and Ally()"
+data "CycleConditions" "Ally() and not Dead()"

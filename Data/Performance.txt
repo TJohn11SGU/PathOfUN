@@ -1,0 +1,6 @@
+new entry "PERFORM_POSITIVE_THEPOWER"
+type "StatusData"
+data "StatusType" "BOOST"
+using "PERFORM_POSITIVE_THEPOWER"
+data "RemoveConditions" "not StatusHasStatusGroup(context.StatusId, 'SG_None') and not StatusDoesNotInterruptPerform() or HasFunctor(StatsFunctorType.DealDamage) or HasFunctor(StatsFunctorType.Force)"
+data "RemoveEvents" "OnSpellCast;OnDamage;OnEquip;OnUnequip;OnMove;OnRemovePerformanceRequest;OnStatusApplied;OnCombatEnded"
